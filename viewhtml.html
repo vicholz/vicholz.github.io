@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>HTML Viewer</title>
+	<script type="text/javascript">
+
+function xhr(url, type, callback){
+    var xhttp=new XMLHttpRequest();
+    xhttp.open(type,url,true);
+    xhttp.send();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.status == 200 && xhttp.readyState == 4){
+            callback(xhttp);
+        }
+    }
+}
+
+function main(){
+    var url = location.href.split("#").pop();
+    if (url){
+        xhr(url, "GET", function(r){
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(r.responseText, "text/html");
+            //document.replaceChild(doc, document.documentElement);
+            document.open();
+            document.write(r.responseText);
+            document.close()
+        })
+    }
+}
+
+    </script>
+</head>
+<body onload="main()">
+</body>
+</html>
