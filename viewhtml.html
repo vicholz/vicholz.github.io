@@ -17,7 +17,8 @@ function xhr(url, type, callback){
 }
 
 function main(){
-    var url = location.href.split("#").pop();
+    var PARAMS = new URLSearchParams(location.search.slice(1));
+    var url = PARAMS.get("url");
     if (url){
         xhr(url, "GET", function(r){
             var parser = new DOMParser();
