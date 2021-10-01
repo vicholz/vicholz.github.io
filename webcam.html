@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <title>VIDEO</title>
+    </head>
+    <style>
+        body {
+            background-color: black;
+            color: gray;
+            margin: 0px;
+        }
+        select {
+            background-color: black;
+            color: gray;
+        }
+        #device_selectors {
+            display: flex;
+            float: left;
+            width: 100%;
+        }
+        .device_selector {
+            margin: 5px;
+        }
+        #video_container{
+            width: 100%;
+        }
+        #video_stream{
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+    <script>
+        function adjust_size(){
+            var ds = document.querySelector("#device_selectors")
+            var vs = document.querySelector("#video_stream")
+            vs.height = window.innerHeight - ds.clientHeight;
+        }
+
+        function main(){
+            navigator.mediaDevices.enumerateDevices()
+            .then(function(devices) {
+                devices.forEach(function(device) {
+                    var option = document.createElement("option");
+                    var value = device.deviceId;
+                    var text = device.label !== "" ? device.label : "UNKNOWN";
+                    option.value = value;
+                    option.text = text;
+                    if (device.kind == "videoinput"){
+                        document.querySelector("#video_device").appendChild(option);
+                    } else if (device.kind == "audioinput"){
+                        document.querySelector("#audio_device").appendChild(option);
+                    }
+                });
+            });
+
+
+            var video = document.querySelector("#video_stream");
+            console.log(video);
+            navigator.mediaDevices.getUserMedia({video: true, audio: true})
+                .then(function(stream) {
+                    video.srcObject = stream;
+                })
+                .catch(function(e) {
+                    console.log("Something went wrong!");
+                });
+                
+            window.addEventListener('resize', adjust_size());
+            adjust_size();
+        }
+
+        function deviceChange(){
+            const audioSource = document.querySelector("#audio_device").value;
+            const videoSource = document.querySelector("#video_device").value;
+            const constraints = {
+                audio: {deviceId: audioSource ? {exact: audioSource} : true},
+                video: {deviceId: videoSource ? {exact: videoSource} : true}
+            };
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(function(stream){
+                    document.querySelector("#video_stream").srcObject = stream;
+                })
+                .catch(function(e) {
+                    console.log("Something went wrong!");
+                });
+        }
+    </script>
+    <body onload="main();">
+        <div id="device_selectors">
+            <div class="device_selector">
+                <label for="video_device">VIDEO DEVICE:</label>
+                <select id="video_device" onchange="deviceChange();"></select>
+            </div>
+            <div class="device_selector">
+                <label for="audio_device">AUDIO DEVICE:</label>
+                <select id="audio_device" onchange="deviceChange();"></select>
+            </div>
+        </div>
+        <div id="video_container" style="position:relative;">
+            <video id="video_stream" height="100%" width=auto autoplay playsinline></video>
+        </div>
+    </body>
+</html>
