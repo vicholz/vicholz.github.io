@@ -29,6 +29,36 @@
                 })();
             }
 
+            function download(data, filename, type) {
+                var file = new Blob([data], {type: type});
+                if (window.navigator.msSaveOrOpenBlob) // IE10+
+                    window.navigator.msSaveOrOpenBlob(file, filename);
+                else { // Others
+                    var a = document.createElement("a"),
+                            url = URL.createObjectURL(file);
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(function() {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);  
+                    }, 0); 
+                }
+            }
+
+            function save(){
+                if (document.querySelector('#OUTPUT').innerText.trim().length == 0){
+                    alert("Please click generate to generate output before saving.");
+                    return;
+                }
+                download(
+                    document.querySelector('#OUTPUT').innerText,
+                    'autounattend.xml',
+                    'text/xml;charset=utf-8'
+                )
+            }
+
             function generate(){
                 var UserData_ComputerName = document.querySelector("#UserData_ComputerName").value;
                 var UserData_Name = document.querySelector("#UserData_Name").value;
@@ -196,11 +226,14 @@
             </div>
             <hr>
             <div id="Generate">
-                <button id="generate" onclick="generate();">GENERATE</button>&NonBreakingSpace;<span>CLICK OUTPUT TO COPY</span>
+                <button id="generate" onclick="generate();">GENERATE</button>&NonBreakingSpace;
+                <button id="save" onclick="save();">SAVE</button><br>
+                <span>Save 'autounattend.xml' to root of USB Installer to use.</span>
             </div>
         </div>
         <hr>
         <div>
+            <span>Click output XML to copy it.</span>
             <pre id="OUTPUT" name="OUTPUT" onclick="copy(this);selectFade(this);">
             </pre>
         </div>
