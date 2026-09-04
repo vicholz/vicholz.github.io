@@ -1,239 +1,724 @@
-<html>
-    <head>
-        <title>GEN</title>
-        <script>
-            function copy(obj) {
-                var range = document.createRange();
-                var selection = window.getSelection();
-                range.selectNodeContents(obj);
-                selection.removeAllRanges();
-                selection.addRange(range);
-                try {
-                    var successful = document.execCommand('copy');
-                    var msg = successful ? 'successful' : 'unsuccessful';
-                    console.log('Copy command was ' + msg);
-                } catch(err) {
-                    console.log('Oops, unable to copy');
-                }
-                window.getSelection().removeAllRanges();
-            }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>simple_autounattend</title>
+  <meta name="description" content="Generate a Windows autounattend.xml answer file for unattended setup with a local admin account.">
+  <meta name="theme-color" content="#101214">
+  <link rel="icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MQ40YCP73V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-MQ40YCP73V");
+    gtag("config", "G-Y7K089ZY70");
+  </script>
+  <style>
+    :root {
+      --bg: #101214;
+      --bg-2: #161a1d;
+      --card: #1b2126;
+      --card-hover: #22292f;
+      --line: #2c343c;
+      --text: #ece6dc;
+      --muted: #9a9388;
+      --faint: #6f6a62;
+      --brass: #d4a056;
+      --brass-2: #f0c27a;
+      --ink: #0b0d0f;
+      --danger: #e08a7a;
+      --ok: #8fbf88;
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+      --radius: 16px;
+    }
 
-            function selectFade(obj){
-                var opacity = 1.0;
-                (function (){
-                    var fadeTimer = setInterval(function(){
-                        opacity -= 0.1;
-                        obj.style.backgroundColor = "rgba(0, 255, 0, " + opacity + ")";
-                        if (opacity <= 0) clearInterval(fadeTimer);
-                    },50);
-                })();
-            }
+    * { box-sizing: border-box; }
 
-            function download(data, filename, type) {
-                var file = new Blob([data], {type: type});
-                if (window.navigator.msSaveOrOpenBlob) // IE10+
-                    window.navigator.msSaveOrOpenBlob(file, filename);
-                else { // Others
-                    var a = document.createElement("a"),
-                            url = URL.createObjectURL(file);
-                    a.href = url;
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-                    setTimeout(function() {
-                        document.body.removeChild(a);
-                        window.URL.revokeObjectURL(url);  
-                    }, 0); 
-                }
-            }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
 
-            function save(){
-                if (document.querySelector('#OUTPUT').innerText.trim().length == 0){
-                    alert("Please click generate to generate output before saving.");
-                    return;
-                }
-                download(
-                    document.querySelector('#OUTPUT').innerText,
-                    'autounattend.xml',
-                    'text/xml;charset=utf-8'
-                )
-            }
+    body {
+      background-image:
+        radial-gradient(1200px 500px at 8% -10%, rgba(212, 160, 86, 0.08), transparent 55%),
+        linear-gradient(rgba(44, 52, 60, 0.55) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(44, 52, 60, 0.55) 1px, transparent 1px);
+      background-size: auto, 48px 48px, 48px 48px;
+    }
 
-            function generate(){
-                var UserData_ComputerName = document.querySelector("#UserData_ComputerName").value;
-                var UserData_Name = document.querySelector("#UserData_Name").value;
-                var UserData_Username = document.querySelector("#UserData_Username").value; 
-                var XML_TEMPLATE = `
-<?xml version="1.0" encoding="utf-8"?>
-<unattend xmlns="urn:schemas-microsoft-com:unattend">
-    <settings pass="windowsPE">
-        <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
-            xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <SetupUILanguage>
-                <UILanguage>en-US</UILanguage>
-            </SetupUILanguage>
-            <InputLocale>0409:00000409</InputLocale>
-            <SystemLocale>en-US</SystemLocale>
-            <UILanguage>en-US</UILanguage>
-            <UILanguageFallback>en-US</UILanguageFallback>
-            <UserLocale>en-US</UserLocale>
-        </component>
-        <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
-            xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <UserData>
-                <ProductKey>
-                    <!-- Do not uncomment the Key element if you are using trial ISOs -->
-                    <!-- You must uncomment the Key element (and optionally insert your own key) if you are using retail or volume license ISOs -->
-                    <Key></Key>
-                    <WillShowUI>Never</WillShowUI>
-                </ProductKey>
-                <AcceptEula>true</AcceptEula>
-                <FullName>${UserData_Name}</FullName>
-                <Organization></Organization>
-            </UserData>
-        </component>
-    </settings>
-    <settings pass="offlineServicing">
-        <component name="Microsoft-Windows-LUA-Settings" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
-            xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <EnableLUA>false</EnableLUA>
-        </component>
-    </settings>
-    <settings pass="generalize">
-        <component name="Microsoft-Windows-Security-SPP" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
-            xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <SkipRearm>1</SkipRearm>
-        </component>
-    </settings>
-    <settings pass="specialize">
-        <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
-            xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <InputLocale>0409:00000409</InputLocale>
-            <SystemLocale>en-US</SystemLocale>
-            <UILanguage>en-US</UILanguage>
-            <UILanguageFallback>en-US</UILanguageFallback>
-            <UserLocale>en-US</UserLocale>
-        </component>
-        <component name="Microsoft-Windows-Security-SPP-UX" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
-            xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <SkipAutoActivation>true</SkipAutoActivation>
-        </component>
-        <component name="Microsoft-Windows-SQMApi" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
-            xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <CEIPEnabled>0</CEIPEnabled>
-        </component>
-        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
-            xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <ComputerName>${UserData_ComputerName}</ComputerName>
-        </component>
-    </settings>
-    <settings pass="oobeSystem">
-        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
-            xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <OOBE>
-                <HideEULAPage>true</HideEULAPage>
-                <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
-                <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
-                <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
-                <NetworkLocation>Home</NetworkLocation>
-                <SkipUserOOBE>true</SkipUserOOBE>
-                <SkipMachineOOBE>true</SkipMachineOOBE>
-                <ProtectYourPC>1</ProtectYourPC>
-            </OOBE>
-            <UserAccounts>
-                <LocalAccounts>
-                    <LocalAccount wcm:action="add">
-                        <Password>
-                            <Value></Value>
-                            <PlainText>true</PlainText>
-                        </Password>
-                        <Description></Description>
-                        <DisplayName>${UserData_Name}</DisplayName>
-                        <Group>Administrators</Group>
-                        <Name>${UserData_Username}</Name>
-                    </LocalAccount>
-                </LocalAccounts>
-            </UserAccounts>
-            <RegisteredOrganization></RegisteredOrganization>
-            <RegisteredOwner>User</RegisteredOwner>
-            <DisableAutoDaylightTimeSet>false</DisableAutoDaylightTimeSet>
-            <FirstLogonCommands>
-                <SynchronousCommand wcm:action="add">
-                    <Description>Disable Cortana</Description>
-                    <Order>1</Order>
-                    <CommandLine>CMD /c REG add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE" /v DisableVoice /t REG_DWORD /d 1</CommandLine>
-                </SynchronousCommand>
-                <SynchronousCommand wcm:action="add">
-                    <Description>Disable Lock Screen</Description>
-                    <Order>2</Order>
-                    <CommandLine>CMD /c REG add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization" /v NoLockScreen /t REG_DWORD /d 1</CommandLine>
-                </SynchronousCommand>
-                <SynchronousCommand wcm:action="add">
-                    <Description>Disable Lock Screen</Description>
-                    <Order>3</Order>
-                    <CommandLine>CMD /c REG add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v ShowSecondsInSystemClock /t REG_DWORD /d 1</CommandLine>
-                </SynchronousCommand>
-                <SynchronousCommand wcm:action="add">
-                    <Description>Control Panel View</Description>
-                    <Order>4</Order>
-                    <CommandLine>CMD /c REG add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel" /v StartupPage /t REG_DWORD /d 1 /f</CommandLine>
-                    <RequiresUserInput>true</RequiresUserInput>
-                </SynchronousCommand>
-                <SynchronousCommand wcm:action="add">
-                    <Order>5</Order>
-                    <Description>Control Panel Icon Size</Description>
-                    <RequiresUserInput>false</RequiresUserInput>
-                    <CommandLine>CMD /c REG add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel" /v AllItemsIconView /t REG_DWORD /d 0 /f</CommandLine>
-                </SynchronousCommand>
-                <SynchronousCommand wcm:action="add">
-                    <Order>6</Order>
-                    <RequiresUserInput>false</RequiresUserInput>
-                    <CommandLine>CMD /c wmic useraccount where name="${UserData_Username}" set PasswordExpires=false</CommandLine>
-                    <Description>Password Never Expires</Description>
-                </SynchronousCommand>
-                <SynchronousCommand wcm:action="add">
-                    <Order>7</Order>
-                    <RequiresUserInput>false</RequiresUserInput>
-                    <CommandLine>CMD /c REG add "HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f /ve</CommandLine>
-                    <Description>Enable Classic Explorer Context Menu</Description>
-                </SynchronousCommand>
-            </FirstLogonCommands>
-            <TimeZone>Pacific Standard Time</TimeZone>
-        </component>
-    </settings>
-</unattend>`;
-    document.querySelector("#OUTPUT").innerText = XML_TEMPLATE;
-}
-        </script>
-    </head>
-    <body>
-        <div id="options">
-            <div id="userdata">
-                <label for="UserData_ComputerName">Computer Name:</label><input type="text" id="UserData_ComputerName" name="UserData_ComputerName" value="NEW-PC"/><br>
-                <label for="UserData_Name">Full Name:</label><input type="text" id="UserData_Name" name="UserData_Name" value="User" onkeyup="document.querySelector('#UserData_Username').value = this.value.toLowerCase();"/><br>
-                <label for="UserData_Username">Username:</label><input type="text" id="UserData_Username" name="UserData_Username" value="user"/><br>
+    a { color: inherit; }
+
+    .wrap {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 28px 0 80px;
+    }
+
+    header.top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      font-family: Syne, sans-serif;
+      font-weight: 800;
+      font-size: 1.35rem;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-sub {
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.85rem;
+    }
+
+    .lede {
+      max-width: 46rem;
+      margin: 28px 0 0;
+      color: var(--muted);
+    }
+
+    .lede h1 {
+      margin: 0 0 8px;
+      font-family: Syne, sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      gap: 18px;
+      margin-top: 28px;
+      align-items: start;
+      min-width: 0;
+    }
+
+    .card {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      padding: 20px;
+    }
+
+    .card h2 {
+      margin: 0 0 16px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 12px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field.span-2 { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .hint {
+      color: var(--faint);
+      font-size: 0.78rem;
+    }
+
+    input, select {
+      appearance: none;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--bg-2);
+      color: var(--text);
+      padding: 11px 12px;
+      font: inherit;
+    }
+
+    input:focus-visible, select:focus-visible, button:focus-visible {
+      outline: 2px solid var(--brass);
+      outline-offset: 1px;
+      border-color: var(--brass);
+    }
+
+    input[aria-invalid="true"] {
+      border-color: var(--danger);
+    }
+
+    .error {
+      min-height: 1.1em;
+      color: var(--danger);
+      font-size: 0.78rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--brass);
+      color: var(--ink);
+      font: inherit;
+      font-weight: 600;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--text);
+    }
+
+    button:hover { filter: brightness(1.05); }
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: none;
+    }
+
+    .note {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .output-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .output-head h2 { margin: 0; }
+
+    .status {
+      color: var(--ok);
+      font-size: 0.82rem;
+      min-height: 1.2em;
+    }
+
+    pre {
+      margin: 0;
+      max-width: 100%;
+      max-height: min(70vh, 720px);
+      overflow: auto;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--ink);
+      color: var(--brass-2);
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.75rem;
+      line-height: 1.45;
+      white-space: pre;
+      cursor: pointer;
+    }
+
+    pre.flash {
+      animation: flash 0.7s ease;
+    }
+
+    @keyframes flash {
+      from { background: rgba(212, 160, 86, 0.22); }
+      to { background: var(--ink); }
+    }
+
+    footer {
+      margin-top: 48px;
+      color: var(--faint);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 900px) {
+      .layout, .fields { grid-template-columns: 1fr; }
+      .field.span-2 { grid-column: auto; }
+    }
+
+    @media (max-width: 640px) {
+      .wrap { width: min(1120px, calc(100% - 28px)); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      pre.flash { animation: none; }
+      button:hover { filter: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="./">
+        <span class="brand-mark">TOOLS</span>
+        <span class="brand-sub">/ autounattend</span>
+      </a>
+    </header>
+
+    <div class="lede">
+      <h1>Windows answer file</h1>
+      <p>Generate an <code>autounattend.xml</code> that skips OOBE, creates a local administrator, and applies a few first-logon tweaks. Copy the file to the root of a Windows USB installer.</p>
+    </div>
+
+    <div class="layout">
+      <section class="card" aria-labelledby="setup-title">
+        <h2 id="setup-title">Setup</h2>
+        <form id="form" autocomplete="off">
+          <div class="fields">
+            <div class="field">
+              <label for="computerName">Computer name</label>
+              <input id="computerName" name="computerName" value="NEW-PC" maxlength="15" spellcheck="false">
+              <span class="hint">1–15 characters. Letters, numbers, and hyphens. Use * for a random name.</span>
+              <span class="error" id="computerNameError"></span>
             </div>
-            <hr>
-            <div id="Generate">
-                <button id="generate" onclick="generate();">GENERATE</button>&NonBreakingSpace;
-                <button id="save" onclick="save();">SAVE</button><br>
-                <span>Save 'autounattend.xml' to root of USB Installer to use.</span>
+            <div class="field">
+              <label for="fullName">Full name</label>
+              <input id="fullName" name="fullName" value="User">
             </div>
+            <div class="field">
+              <label for="username">Username</label>
+              <input id="username" name="username" value="user" maxlength="20" spellcheck="false">
+              <span class="hint">Local account name. Follows the full name until you edit it.</span>
+              <span class="error" id="usernameError"></span>
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <input id="password" name="password" type="password" value="" autocomplete="new-password">
+              <span class="hint">Optional. Stored in plaintext in the XML. Leave blank for an empty password.</span>
+            </div>
+            <div class="field">
+              <label for="organization">Organization</label>
+              <input id="organization" name="organization" value="">
+            </div>
+            <div class="field">
+              <label for="productKey">Product key</label>
+              <input id="productKey" name="productKey" value="" spellcheck="false" placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX">
+              <span class="hint">Optional. Leave blank for trial or generic images.</span>
+            </div>
+            <div class="field">
+              <label for="timeZone">Time zone</label>
+              <select id="timeZone" name="timeZone"></select>
+            </div>
+            <div class="field">
+              <label for="arch">Architecture</label>
+              <select id="arch" name="arch">
+                <option value="amd64" selected>64-bit (amd64)</option>
+                <option value="arm64">ARM64</option>
+              </select>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="submit" id="generate">Generate</button>
+            <button type="button" class="secondary" id="copyBtn">Copy XML</button>
+            <button type="button" class="secondary" id="saveBtn">Download</button>
+          </div>
+          <p class="note">You still choose the install disk during setup. This file does not partition or wipe drives. Auto-logon is not included.</p>
+        </form>
+      </section>
+
+      <section class="card" aria-labelledby="output-title">
+        <div class="output-head">
+          <h2 id="output-title">autounattend.xml</h2>
+          <div class="status" id="status" role="status"></div>
         </div>
-        <hr>
-        <div>
-            <span>Click output XML to copy it.</span>
-            <pre id="OUTPUT" name="OUTPUT" onclick="copy(this);selectFade(this);">
-            </pre>
-        </div>
-    </body>
+        <pre id="OUTPUT" tabindex="0" title="Click to copy"></pre>
+      </section>
+    </div>
+
+    <footer>
+      Place the downloaded file at the root of the installer USB as <code>autounattend.xml</code>.
+    </footer>
+  </div>
+
+  <script>
+    const TIMEZONES = [
+      ["Pacific Standard Time", "Pacific Time (US & Canada)"],
+      ["Mountain Standard Time", "Mountain Time (US & Canada)"],
+      ["US Mountain Standard Time", "Arizona"],
+      ["Central Standard Time", "Central Time (US & Canada)"],
+      ["Eastern Standard Time", "Eastern Time (US & Canada)"],
+      ["Alaskan Standard Time", "Alaska"],
+      ["Hawaiian Standard Time", "Hawaii"],
+      ["UTC", "UTC"],
+      ["SA Pacific Standard Time", "Bogota, Lima"],
+      ["Atlantic Standard Time", "Atlantic Time (Canada)"],
+      ["GMT Standard Time", "London, Dublin"],
+      ["W. Europe Standard Time", "Amsterdam, Berlin"],
+      ["Romance Standard Time", "Brussels, Paris"],
+      ["Central Europe Standard Time", "Budapest, Prague"],
+      ["GTB Standard Time", "Athens, Bucharest"],
+      ["Russian Standard Time", "Moscow"],
+      ["South Africa Standard Time", "Johannesburg"],
+      ["Egypt Standard Time", "Cairo"],
+      ["Israel Standard Time", "Jerusalem"],
+      ["Arabian Standard Time", "Abu Dhabi, Muscat"],
+      ["Iran Standard Time", "Tehran"],
+      ["India Standard Time", "Chennai, Kolkata, Mumbai"],
+      ["Bangladesh Standard Time", "Dhaka"],
+      ["SE Asia Standard Time", "Bangkok, Jakarta"],
+      ["China Standard Time", "Beijing, Hong Kong"],
+      ["Singapore Standard Time", "Kuala Lumpur, Singapore"],
+      ["Tokyo Standard Time", "Osaka, Tokyo"],
+      ["Korea Standard Time", "Seoul"],
+      ["AUS Eastern Standard Time", "Canberra, Melbourne, Sydney"],
+      ["E. Australia Standard Time", "Brisbane"],
+      ["Cen. Australia Standard Time", "Adelaide"],
+      ["New Zealand Standard Time", "Auckland, Wellington"]
+    ];
+
+    const form = document.getElementById("form");
+    const computerName = document.getElementById("computerName");
+    const fullName = document.getElementById("fullName");
+    const username = document.getElementById("username");
+    const password = document.getElementById("password");
+    const organization = document.getElementById("organization");
+    const productKey = document.getElementById("productKey");
+    const timeZone = document.getElementById("timeZone");
+    const arch = document.getElementById("arch");
+    const output = document.getElementById("OUTPUT");
+    const statusEl = document.getElementById("status");
+    const copyBtn = document.getElementById("copyBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const computerNameError = document.getElementById("computerNameError");
+    const usernameError = document.getElementById("usernameError");
+
+    let usernameTouched = false;
+    let xmlText = "";
+    let statusTimer = 0;
+
+    TIMEZONES.forEach(function (pair) {
+      const option = document.createElement("option");
+      option.value = pair[0];
+      option.textContent = pair[1];
+      if (pair[0] === "Pacific Standard Time") option.selected = true;
+      timeZone.appendChild(option);
+    });
+
+    function escapeXml(value) {
+      return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+    }
+
+    function suggestUsername(name) {
+      const slug = String(name || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9._-]+/g, "")
+        .slice(0, 20);
+      return slug || "user";
+    }
+
+    function setStatus(message) {
+      statusEl.textContent = message;
+      clearTimeout(statusTimer);
+      if (message) {
+        statusTimer = setTimeout(function () { statusEl.textContent = ""; }, 2400);
+      }
+    }
+
+    function flashOutput() {
+      output.classList.remove("flash");
+      void output.offsetWidth;
+      output.classList.add("flash");
+    }
+
+    function validateComputerName(value) {
+      const name = value.trim();
+      if (!name) return "Computer name is required.";
+      if (name === "*") return "";
+      if (name.length > 15) return "Must be 15 characters or fewer.";
+      if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,14})$/.test(name)) {
+        return "Use letters, numbers, and hyphens only.";
+      }
+      if (/^\d+$/.test(name)) return "Cannot be only digits.";
+      return "";
+    }
+
+    function validateUsername(value) {
+      const name = value.trim();
+      if (!name) return "Username is required.";
+      if (name.length > 20) return "Must be 20 characters or fewer.";
+      if (!/^[A-Za-z0-9._-]+$/.test(name)) return "Use letters, numbers, dots, underscores, and hyphens only.";
+      if (/^\.+$/.test(name)) return "Cannot be only periods.";
+      return "";
+    }
+
+    function validate() {
+      const computerErr = validateComputerName(computerName.value);
+      const userErr = validateUsername(username.value);
+      computerNameError.textContent = computerErr;
+      usernameError.textContent = userErr;
+      computerName.setAttribute("aria-invalid", computerErr ? "true" : "false");
+      username.setAttribute("aria-invalid", userErr ? "true" : "false");
+      const ok = !computerErr && !userErr;
+      copyBtn.disabled = !ok;
+      saveBtn.disabled = !ok;
+      return ok;
+    }
+
+    function component(archName, name, inner) {
+      return [
+        '        <component name="' + name + '" processorArchitecture="' + archName + '" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"',
+        '            xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"',
+        '            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">',
+        inner,
+        "        </component>"
+      ].join("\n");
+    }
+
+    function buildXml() {
+      const a = arch.value === "arm64" ? "arm64" : "amd64";
+      const pc = escapeXml(computerName.value.trim());
+      const display = escapeXml(fullName.value.trim() || username.value.trim());
+      const user = escapeXml(username.value.trim());
+      const org = escapeXml(organization.value.trim());
+      const pass = escapeXml(password.value);
+      const tz = escapeXml(timeZone.value || "Pacific Standard Time");
+      const key = productKey.value.replace(/\s+/g, "").toUpperCase();
+      const keyXml = key
+        ? "                    <Key>" + escapeXml(key) + "</Key>\n"
+        : "";
+
+      return [
+        '<?xml version="1.0" encoding="utf-8"?>',
+        '<unattend xmlns="urn:schemas-microsoft-com:unattend">',
+        '    <settings pass="windowsPE">',
+        component(a, "Microsoft-Windows-International-Core-WinPE", [
+          "            <SetupUILanguage>",
+          "                <UILanguage>en-US</UILanguage>",
+          "            </SetupUILanguage>",
+          "            <InputLocale>0409:00000409</InputLocale>",
+          "            <SystemLocale>en-US</SystemLocale>",
+          "            <UILanguage>en-US</UILanguage>",
+          "            <UILanguageFallback>en-US</UILanguageFallback>",
+          "            <UserLocale>en-US</UserLocale>"
+        ].join("\n")),
+        component(a, "Microsoft-Windows-Setup", [
+          "            <UserData>",
+          "                <ProductKey>",
+          keyXml +
+          "                    <WillShowUI>Never</WillShowUI>",
+          "                </ProductKey>",
+          "                <AcceptEula>true</AcceptEula>",
+          "                <FullName>" + display + "</FullName>",
+          "                <Organization>" + org + "</Organization>",
+          "            </UserData>"
+        ].join("\n")),
+        "    </settings>",
+        '    <settings pass="offlineServicing">',
+        component(a, "Microsoft-Windows-LUA-Settings", "            <EnableLUA>false</EnableLUA>"),
+        "    </settings>",
+        '    <settings pass="generalize">',
+        component(a, "Microsoft-Windows-Security-SPP", "            <SkipRearm>1</SkipRearm>"),
+        "    </settings>",
+        '    <settings pass="specialize">',
+        component(a, "Microsoft-Windows-International-Core", [
+          "            <InputLocale>0409:00000409</InputLocale>",
+          "            <SystemLocale>en-US</SystemLocale>",
+          "            <UILanguage>en-US</UILanguage>",
+          "            <UILanguageFallback>en-US</UILanguageFallback>",
+          "            <UserLocale>en-US</UserLocale>"
+        ].join("\n")),
+        component(a, "Microsoft-Windows-Security-SPP-UX", "            <SkipAutoActivation>true</SkipAutoActivation>"),
+        component(a, "Microsoft-Windows-SQMApi", "            <CEIPEnabled>0</CEIPEnabled>"),
+        component(a, "Microsoft-Windows-Shell-Setup", "            <ComputerName>" + pc + "</ComputerName>"),
+        "    </settings>",
+        '    <settings pass="oobeSystem">',
+        component(a, "Microsoft-Windows-Shell-Setup", [
+          "            <OOBE>",
+          "                <HideEULAPage>true</HideEULAPage>",
+          "                <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>",
+          "                <HideOnlineAccountScreens>true</HideOnlineAccountScreens>",
+          "                <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>",
+          "                <ProtectYourPC>1</ProtectYourPC>",
+          "            </OOBE>",
+          "            <UserAccounts>",
+          "                <LocalAccounts>",
+          '                    <LocalAccount wcm:action="add">',
+          "                        <Password>",
+          "                            <Value>" + pass + "</Value>",
+          "                            <PlainText>true</PlainText>",
+          "                        </Password>",
+          "                        <Description></Description>",
+          "                        <DisplayName>" + display + "</DisplayName>",
+          "                        <Group>Administrators</Group>",
+          "                        <Name>" + user + "</Name>",
+          "                    </LocalAccount>",
+          "                </LocalAccounts>",
+          "            </UserAccounts>",
+          "            <RegisteredOrganization>" + org + "</RegisteredOrganization>",
+          "            <RegisteredOwner>" + display + "</RegisteredOwner>",
+          "            <DisableAutoDaylightTimeSet>false</DisableAutoDaylightTimeSet>",
+          "            <FirstLogonCommands>",
+          '                <SynchronousCommand wcm:action="add">',
+          "                    <Description>Disable Cortana</Description>",
+          "                    <Order>1</Order>",
+          '                    <CommandLine>CMD /c REG add "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OOBE" /v DisableVoice /t REG_DWORD /d 1 /f</CommandLine>',
+          "                    <RequiresUserInput>false</RequiresUserInput>",
+          "                </SynchronousCommand>",
+          '                <SynchronousCommand wcm:action="add">',
+          "                    <Description>Disable Lock Screen</Description>",
+          "                    <Order>2</Order>",
+          '                    <CommandLine>CMD /c REG add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\Personalization" /v NoLockScreen /t REG_DWORD /d 1 /f</CommandLine>',
+          "                    <RequiresUserInput>false</RequiresUserInput>",
+          "                </SynchronousCommand>",
+          '                <SynchronousCommand wcm:action="add">',
+          "                    <Description>Show Seconds in System Clock</Description>",
+          "                    <Order>3</Order>",
+          '                    <CommandLine>CMD /c REG add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced" /v ShowSecondsInSystemClock /t REG_DWORD /d 1 /f</CommandLine>',
+          "                    <RequiresUserInput>false</RequiresUserInput>",
+          "                </SynchronousCommand>",
+          '                <SynchronousCommand wcm:action="add">',
+          "                    <Description>Control Panel View</Description>",
+          "                    <Order>4</Order>",
+          '                    <CommandLine>CMD /c REG add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ControlPanel" /v StartupPage /t REG_DWORD /d 1 /f</CommandLine>',
+          "                    <RequiresUserInput>false</RequiresUserInput>",
+          "                </SynchronousCommand>",
+          '                <SynchronousCommand wcm:action="add">',
+          "                    <Order>5</Order>",
+          "                    <Description>Control Panel Icon Size</Description>",
+          "                    <RequiresUserInput>false</RequiresUserInput>",
+          '                    <CommandLine>CMD /c REG add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ControlPanel" /v AllItemsIconView /t REG_DWORD /d 0 /f</CommandLine>',
+          "                </SynchronousCommand>",
+          '                <SynchronousCommand wcm:action="add">',
+          "                    <Order>6</Order>",
+          "                    <RequiresUserInput>false</RequiresUserInput>",
+          '                    <CommandLine>powershell.exe -NoProfile -Command "Set-LocalUser -Name \'' + user + '\' -PasswordNeverExpires $true"</CommandLine>',
+          "                    <Description>Password Never Expires</Description>",
+          "                </SynchronousCommand>",
+          '                <SynchronousCommand wcm:action="add">',
+          "                    <Order>7</Order>",
+          "                    <RequiresUserInput>false</RequiresUserInput>",
+          '                    <CommandLine>CMD /c REG add "HKCU\\Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\\InprocServer32" /f /ve</CommandLine>',
+          "                    <Description>Enable Classic Explorer Context Menu</Description>",
+          "                </SynchronousCommand>",
+          "            </FirstLogonCommands>",
+          "            <TimeZone>" + tz + "</TimeZone>"
+        ].join("\n")),
+        "    </settings>",
+        "</unattend>"
+      ].join("\n");
+    }
+
+    function generate() {
+      if (!validate()) {
+        xmlText = "";
+        output.textContent = "";
+        return false;
+      }
+      xmlText = buildXml();
+      output.textContent = xmlText;
+      return true;
+    }
+
+    async function copyXml() {
+      if (!generate()) return;
+      try {
+        await navigator.clipboard.writeText(xmlText);
+        setStatus("Copied");
+        flashOutput();
+      } catch (err) {
+        const range = document.createRange();
+        range.selectNodeContents(output);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        const ok = document.execCommand("copy");
+        selection.removeAllRanges();
+        setStatus(ok ? "Copied" : "Copy failed");
+        flashOutput();
+      }
+    }
+
+    function downloadXml() {
+      if (!generate()) return;
+      const blob = new Blob([xmlText], { type: "text/xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "autounattend.xml";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 0);
+      setStatus("Downloaded");
+    }
+
+    fullName.addEventListener("input", function () {
+      if (!usernameTouched) username.value = suggestUsername(fullName.value);
+      generate();
+    });
+
+    username.addEventListener("input", function () {
+      usernameTouched = true;
+      generate();
+    });
+
+    form.addEventListener("input", function (event) {
+      if (event.target === fullName || event.target === username) return;
+      generate();
+    });
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (generate()) {
+        setStatus("Generated");
+        flashOutput();
+        output.focus();
+      }
+    });
+
+    copyBtn.addEventListener("click", copyXml);
+    saveBtn.addEventListener("click", downloadXml);
+    output.addEventListener("click", copyXml);
+    output.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        copyXml();
+      }
+    });
+
+    generate();
+  </script>
+</body>
 </html>

@@ -1,47 +1,438 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<meta charset="utf-8">
-	<title>HTML Viewer</title>
-	<!-- Google tag (gtag.js) -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-MQ40YCP73V"></script>
-	<script>
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-
-	  gtag('config', 'G-MQ40YCP73V');
-	</script>
-	<script type="text/javascript">
-
-function xhr(url, type, callback){
-    var xhttp=new XMLHttpRequest();
-    xhttp.open(type,url,true);
-    xhttp.send();
-    xhttp.onreadystatechange = function() {
-        if (xhttp.status == 200 && xhttp.readyState == 4){
-            callback(xhttp);
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>viewhtml</title>
+  <meta name="description" content="Fetch and preview a remote HTML document in the browser.">
+  <meta name="theme-color" content="#101214">
+  <link rel="icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MQ40YCP73V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-MQ40YCP73V");
+    gtag("config", "G-Y7K089ZY70");
+  </script>
+  <style>
+    :root {
+      --bg: #101214;
+      --bg-2: #161a1d;
+      --card: #1b2126;
+      --line: #2c343c;
+      --text: #ece6dc;
+      --muted: #9a9388;
+      --faint: #6f6a62;
+      --brass: #d4a056;
+      --brass-2: #f0c27a;
+      --ink: #0b0d0f;
+      --danger: #e08a7a;
+      --ok: #8fbf88;
+      --radius: 16px;
     }
-}
 
-function main(){
-    var PARAMS = new URLSearchParams(location.search.slice(1));
-    var url = location.href.split("#").pop();
-    if (url){
-        xhr(url, "GET", function(r){
-            var parser = new DOMParser();
-            var doc = parser.parseFromString(r.responseText, "text/html");
-            //document.replaceChild(doc, document.documentElement);
-            document.open();
-            document.write(r.responseText);
-            document.close()
-        })
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
     }
-}
 
-    </script>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      background-image:
+        radial-gradient(1200px 500px at 8% -10%, rgba(212, 160, 86, 0.08), transparent 55%);
+    }
+
+    a { color: inherit; }
+
+    header.top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      font-family: Syne, sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-sub {
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.85rem;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px 22px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(22, 26, 29, 0.88);
+      flex-shrink: 0;
+    }
+
+    form {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    form input {
+      flex: 1;
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--bg-2);
+      color: var(--text);
+      padding: 11px 12px;
+      font: inherit;
+      min-width: 0;
+    }
+
+    [hidden] { display: none !important; }
+
+    input:focus-visible, button:focus-visible {
+      outline: 2px solid var(--brass);
+      outline-offset: 1px;
+      border-color: var(--brass);
+    }
+
+    button, .link-btn {
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--brass);
+      color: var(--ink);
+      font: inherit;
+      font-weight: 600;
+      padding: 10px 16px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    button.secondary, .link-btn {
+      background: transparent;
+      color: var(--text);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .modes {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .modes label {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .status { color: var(--ok); }
+    .status.error { color: var(--danger); }
+
+    .stage {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      background: transparent;
+    }
+
+    .stage.is-live {
+      background: #fff;
+    }
+
+    iframe {
+      border: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+    }
+
+    .empty {
+      margin: auto;
+      max-width: 36rem;
+      padding: 32px 20px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .empty h1 {
+      margin: 0 0 8px;
+      font-family: Syne, sans-serif;
+      color: var(--text);
+      font-size: 1.5rem;
+    }
+
+    code {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.86em;
+    }
+
+    @media (max-width: 720px) {
+      header.top, .controls { padding-left: 14px; padding-right: 14px; }
+      form { flex-direction: column; }
+    }
+  </style>
 </head>
-<body onload="main()">
+<body>
+  <header class="top">
+    <a class="brand" href="./">
+      <span class="brand-mark">TOOLS</span>
+      <span class="brand-sub">/ viewhtml</span>
+    </a>
+  </header>
+
+  <div class="controls">
+    <form id="form">
+      <input id="url" type="text" inputmode="url" spellcheck="false" placeholder="https://example.com/page.html" autocomplete="off" required>
+      <button type="submit" id="loadBtn">Load</button>
+    </form>
+    <div class="row">
+      <div class="modes">
+        <label><input type="radio" name="mode" value="preview" checked> Preview in frame</label>
+        <label><input type="radio" name="mode" value="replace"> Replace this page</label>
+        <label><input type="radio" name="mode" value="embed"> Embed URL directly</label>
+      </div>
+      <a class="link-btn" id="openBtn" href="#" target="_blank" rel="noopener noreferrer" hidden>Open source</a>
+      <div class="status" id="status" role="status"></div>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="empty" id="empty">
+      <h1>HTML viewer</h1>
+      <p>Paste an HTTP(S) URL, or open this page as <code>viewhtml.html#https://…</code> or <code>viewhtml.html?url=https://…</code>.</p>
+      <p>Fetch-and-render needs CORS. Sites that block framing will also fail in embed mode.</p>
+    </div>
+    <iframe id="frame" title="HTML preview" hidden sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-downloads"></iframe>
+  </div>
+
+  <script>
+    const form = document.getElementById("form");
+    const urlInput = document.getElementById("url");
+    const loadBtn = document.getElementById("loadBtn");
+    const statusEl = document.getElementById("status");
+    const empty = document.getElementById("empty");
+    const frame = document.getElementById("frame");
+    const openBtn = document.getElementById("openBtn");
+
+    function mode() {
+      const picked = document.querySelector('input[name="mode"]:checked');
+      return picked ? picked.value : "preview";
+    }
+
+    function setStatus(message, isError) {
+      statusEl.textContent = message || "";
+      statusEl.classList.toggle("error", Boolean(isError));
+    }
+
+    function requestedUrl() {
+      const params = new URLSearchParams(location.search);
+      const fromQuery = params.get("url");
+      if (fromQuery && fromQuery.trim()) return fromQuery.trim();
+      if (location.hash.length > 1) {
+        try {
+          return decodeURIComponent(location.hash.slice(1)).trim();
+        } catch (err) {
+          return location.hash.slice(1).trim();
+        }
+      }
+      return "";
+    }
+
+    function parseHttpUrl(raw) {
+      let value = String(raw || "").trim();
+      if (!value) throw new Error("Enter a URL.");
+      if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(value)) value = "https://" + value;
+      let parsed;
+      try {
+        parsed = new URL(value, location.href);
+      } catch (err) {
+        throw new Error("That is not a valid URL.");
+      }
+      if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+        throw new Error("Only http and https URLs are allowed.");
+      }
+      const self = new URL(location.href);
+      if (parsed.origin === self.origin && parsed.pathname === self.pathname) {
+        throw new Error("That URL points at this viewer. Add a different page after # or ?url=.");
+      }
+      return parsed;
+    }
+
+    function rememberUrl(href) {
+      const next = new URL(location.href);
+      next.searchParams.delete("url");
+      next.hash = href;
+      history.replaceState(null, "", next.pathname + next.search + "#" + href);
+    }
+
+    function injectBase(html, href) {
+      if (/<base\s/i.test(html)) return html;
+      const base = '<base href="' + href.replace(/&/g, "&amp;").replace(/"/g, "&quot;") + '">';
+      if (/<head[^>]*>/i.test(html)) return html.replace(/<head[^>]*>/i, function (tag) { return tag + base; });
+      return "<head>" + base + "</head>" + html;
+    }
+
+    const PREVIEW_SANDBOX = "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-downloads";
+
+    function showFrame() {
+      empty.hidden = true;
+      frame.hidden = false;
+      document.getElementById("stage").classList.add("is-live");
+    }
+
+    function resetFrame() {
+      frame.removeAttribute("srcdoc");
+      frame.src = "about:blank";
+    }
+
+    async function fetchHtml(href) {
+      const response = await fetch(href, {
+        method: "GET",
+        mode: "cors",
+        credentials: "omit",
+        redirect: "follow"
+      });
+      if (!response.ok) throw new Error("Request failed (" + response.status + ").");
+      return response.text();
+    }
+
+    function replacePage(html) {
+      document.open();
+      document.write(html);
+      document.close();
+    }
+
+    function embedUrl(href) {
+      resetFrame();
+      frame.removeAttribute("sandbox");
+      showFrame();
+      frame.src = href;
+    }
+
+    function previewHtml(html) {
+      resetFrame();
+      frame.setAttribute("sandbox", PREVIEW_SANDBOX);
+      showFrame();
+      frame.srcdoc = html;
+    }
+
+    async function load(raw, options) {
+      const opts = options || {};
+      let parsed;
+      try {
+        parsed = parseHttpUrl(raw);
+      } catch (err) {
+        setStatus(err.message, true);
+        return;
+      }
+
+      urlInput.value = parsed.href;
+      openBtn.hidden = false;
+      openBtn.href = parsed.href;
+      if (!opts.skipRemember) rememberUrl(parsed.href);
+
+      const chosen = mode();
+      loadBtn.disabled = true;
+      setStatus("Loading…");
+
+      try {
+        if (chosen === "embed") {
+          embedUrl(parsed.href);
+          setStatus("Embedded " + parsed.href);
+          return;
+        }
+
+        const html = injectBase(await fetchHtml(parsed.href), parsed.href);
+        if (chosen === "replace") {
+          replacePage(html);
+          return;
+        }
+        previewHtml(html);
+        setStatus("Loaded " + parsed.href);
+      } catch (err) {
+        const corsLikely = err && (err.name === "TypeError" || /Failed to fetch|NetworkError|CORS/i.test(String(err.message)));
+        if (chosen !== "embed") {
+          embedUrl(parsed.href);
+          setStatus(
+            (corsLikely ? "Fetch blocked by CORS. " : "") +
+            "Embedded the URL instead. The site may still refuse to be framed.",
+            true
+          );
+        } else {
+          setStatus(err && err.message ? err.message : "Could not load that URL.", true);
+        }
+      } finally {
+        loadBtn.disabled = false;
+      }
+    }
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      load(urlInput.value);
+    });
+
+    document.querySelectorAll('input[name="mode"]').forEach(function (input) {
+      input.addEventListener("change", function () {
+        if (urlInput.value) load(urlInput.value, { skipRemember: true });
+      });
+    });
+
+    window.addEventListener("hashchange", function () {
+      const fromHash = requestedUrl();
+      if (fromHash && fromHash !== urlInput.value) load(fromHash, { skipRemember: true });
+    });
+
+    const initial = requestedUrl();
+    if (initial) {
+      urlInput.value = initial;
+      load(initial, { skipRemember: true });
+    }
+  </script>
 </body>
 </html>

@@ -1,102 +1,593 @@
-<html>
-    <head>
-        <title>VIDEO</title>
-    </head>
-    <style>
-        body {
-            background-color: black;
-            color: gray;
-            margin: 0px;
-        }
-        select {
-            background-color: black;
-            color: gray;
-        }
-        #device_selectors {
-            display: flex;
-            float: left;
-            width: 100%;
-        }
-        .device_selector {
-            margin: 5px;
-        }
-        #video_container{
-            width: 100%;
-        }
-        #video_stream{
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    </style>
-    <script>
-        function adjust_size(){
-            var ds = document.querySelector("#device_selectors")
-            var vs = document.querySelector("#video_stream")
-            vs.height = window.innerHeight - ds.clientHeight;
-        }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>webcam</title>
+  <meta name="description" content="Preview a local camera and microphone in the browser.">
+  <meta name="theme-color" content="#101214">
+  <link rel="icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MQ40YCP73V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-MQ40YCP73V");
+    gtag("config", "G-Y7K089ZY70");
+  </script>
+  <style>
+    :root {
+      --bg: #101214;
+      --bg-2: #161a1d;
+      --card: #1b2126;
+      --line: #2c343c;
+      --text: #ece6dc;
+      --muted: #9a9388;
+      --faint: #6f6a62;
+      --brass: #d4a056;
+      --brass-2: #f0c27a;
+      --ink: #0b0d0f;
+      --danger: #e08a7a;
+      --radius: 16px;
+    }
 
-        function main(){
-            navigator.mediaDevices.enumerateDevices()
-            .then(function(devices) {
-                devices.forEach(function(device) {
-                    var option = document.createElement("option");
-                    var value = device.deviceId;
-                    var text = device.label !== "" ? device.label : "UNKNOWN";
-                    option.value = value;
-                    option.text = text;
-                    if (device.kind == "videoinput"){
-                        document.querySelector("#video_device").appendChild(option);
-                    } else if (device.kind == "audioinput"){
-                        document.querySelector("#audio_device").appendChild(option);
-                    }
-                });
-            });
+    * { box-sizing: border-box; }
 
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
 
-            var video = document.querySelector("#video_stream");
-            console.log(video);
-            navigator.mediaDevices.getUserMedia({video: true, audio: true})
-                .then(function(stream) {
-                    video.srcObject = stream;
-                })
-                .catch(function(e) {
-                    console.log("Something went wrong!");
-                });
-                
-            window.addEventListener('resize', adjust_size());
-            adjust_size();
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      background-image:
+        radial-gradient(1200px 500px at 8% -10%, rgba(212, 160, 86, 0.08), transparent 55%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    header.top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      font-family: Syne, sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-sub {
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.85rem;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      align-items: end;
+      padding: 12px 22px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(22, 26, 29, 0.88);
+      flex-shrink: 0;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: min(240px, 100%);
+      flex: 1;
+    }
+
+    label {
+      color: var(--faint);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    select, button {
+      appearance: none;
+      font: inherit;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+
+    select {
+      width: 100%;
+      background: var(--bg-2);
+      color: var(--text);
+      padding: 9px 12px;
+    }
+
+    .toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    button {
+      background: transparent;
+      color: var(--text);
+      padding: 9px 14px;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: var(--brass);
+      color: var(--ink);
+      font-weight: 600;
+      border-color: var(--brass);
+    }
+
+    button[aria-pressed="true"] {
+      border-color: var(--brass);
+      color: var(--brass-2);
+    }
+
+    select:focus-visible, button:focus-visible {
+      outline: 2px solid var(--brass);
+      outline-offset: 1px;
+    }
+
+    button:disabled, select:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .meter-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 120px;
+    }
+
+    .meter {
+      height: 10px;
+      border-radius: 999px;
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .meter > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--brass);
+    }
+
+    .stage {
+      flex: 1;
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 0;
+      background: var(--ink);
+    }
+
+    video {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      background: #000;
+    }
+
+    video.mirror { transform: scaleX(-1); }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      text-align: center;
+      background: rgba(11, 13, 15, 0.72);
+    }
+
+    .overlay[hidden] { display: none; }
+
+    .overlay p {
+      max-width: 32rem;
+      color: var(--muted);
+    }
+
+    .overlay h1 {
+      margin: 0 0 8px;
+      font-family: Syne, sans-serif;
+      font-size: 1.4rem;
+    }
+
+    .error { color: var(--danger); }
+
+    .meta {
+      position: absolute;
+      left: 14px;
+      bottom: 14px;
+      color: var(--faint);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.75rem;
+      background: rgba(11, 13, 15, 0.7);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
+    @media (max-width: 720px) {
+      header.top, .toolbar { padding-left: 14px; padding-right: 14px; }
+      .field { min-width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      button { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="./">
+      <span class="brand-mark">TOOLS</span>
+      <span class="brand-sub">/ webcam</span>
+    </a>
+  </header>
+
+  <div class="toolbar">
+    <div class="field">
+      <label for="video_device">Video device</label>
+      <select id="video_device" disabled></select>
+    </div>
+    <div class="field">
+      <label for="audio_device">Audio device</label>
+      <select id="audio_device" disabled></select>
+    </div>
+    <div class="toggles">
+      <button type="button" id="mirrorBtn" aria-pressed="false">Mirror</button>
+      <button type="button" id="monitorBtn" aria-pressed="false">Monitor audio</button>
+      <button type="button" id="snapshotBtn" disabled>Snapshot</button>
+      <button type="button" id="fullscreenBtn" disabled>Fullscreen</button>
+      <button type="button" class="primary" id="startBtn">Start camera</button>
+    </div>
+    <div class="meter-wrap">
+      <label>Mic level</label>
+      <div class="meter" aria-hidden="true"><span id="meterBar"></span></div>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <video id="video_stream" autoplay playsinline muted></video>
+    <div class="overlay" id="overlay">
+      <div>
+        <h1 id="overlayTitle">Camera preview</h1>
+        <p id="overlayBody">Allow camera and microphone access to preview the local capture devices. The microphone is captured for level metering and is not played back unless you enable monitor audio.</p>
+        <p class="error" id="overlayError" hidden></p>
+      </div>
+    </div>
+    <div class="meta" id="meta" hidden></div>
+  </div>
+
+  <script>
+    const videoSelect = document.getElementById("video_device");
+    const audioSelect = document.getElementById("audio_device");
+    const video = document.getElementById("video_stream");
+    const overlay = document.getElementById("overlay");
+    const overlayTitle = document.getElementById("overlayTitle");
+    const overlayBody = document.getElementById("overlayBody");
+    const overlayError = document.getElementById("overlayError");
+    const startBtn = document.getElementById("startBtn");
+    const mirrorBtn = document.getElementById("mirrorBtn");
+    const monitorBtn = document.getElementById("monitorBtn");
+    const snapshotBtn = document.getElementById("snapshotBtn");
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+    const meterBar = document.getElementById("meterBar");
+    const meta = document.getElementById("meta");
+    const stage = document.getElementById("stage");
+
+    let stream = null;
+    let audioContext = null;
+    let analyser = null;
+    let meterRaf = 0;
+    let starting = false;
+
+    function mediaSupported() {
+      return window.isSecureContext && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+    }
+
+    function stopTracks(mediaStream) {
+      if (!mediaStream) return;
+      mediaStream.getTracks().forEach(function (track) { track.stop(); });
+    }
+
+    function setOverlay(title, body, error) {
+      overlay.hidden = false;
+      overlayTitle.textContent = title;
+      overlayBody.textContent = body || "";
+      if (error) {
+        overlayError.hidden = false;
+        overlayError.textContent = error;
+      } else {
+        overlayError.hidden = true;
+        overlayError.textContent = "";
+      }
+    }
+
+    function hideOverlay() {
+      overlay.hidden = true;
+    }
+
+    function fillSelect(select, devices, selectedId) {
+      const previous = selectedId || select.value;
+      select.innerHTML = "";
+      if (!devices.length) {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "None found";
+        select.appendChild(option);
+        select.disabled = true;
+        return;
+      }
+      devices.forEach(function (device, index) {
+        const option = document.createElement("option");
+        option.value = device.deviceId;
+        option.textContent = device.label || ("Device " + (index + 1));
+        select.appendChild(option);
+      });
+      if (previous && devices.some(function (d) { return d.deviceId === previous; })) {
+        select.value = previous;
+      }
+      select.disabled = false;
+    }
+
+    async function refreshDevices(preferred) {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videos = devices.filter(function (d) { return d.kind === "videoinput"; });
+      const audios = devices.filter(function (d) { return d.kind === "audioinput"; });
+      fillSelect(videoSelect, videos, preferred && preferred.video);
+      fillSelect(audioSelect, audios, preferred && preferred.audio);
+    }
+
+    function currentIds() {
+      const videoTrack = stream && stream.getVideoTracks()[0];
+      const audioTrack = stream && stream.getAudioTracks()[0];
+      return {
+        video: (videoTrack && videoTrack.getSettings().deviceId) || videoSelect.value,
+        audio: (audioTrack && audioTrack.getSettings().deviceId) || audioSelect.value
+      };
+    }
+
+    function describeStream() {
+      if (!stream) {
+        meta.hidden = true;
+        return;
+      }
+      const track = stream.getVideoTracks()[0];
+      if (!track) {
+        meta.hidden = true;
+        return;
+      }
+      const settings = track.getSettings();
+      const bits = [];
+      if (settings.width && settings.height) bits.push(settings.width + "×" + settings.height);
+      if (settings.frameRate) bits.push(Math.round(settings.frameRate) + " fps");
+      bits.push(track.label || "camera");
+      meta.hidden = false;
+      meta.textContent = bits.join(" · ");
+    }
+
+    function stopMeter() {
+      cancelAnimationFrame(meterRaf);
+      meterRaf = 0;
+      meterBar.style.width = "0%";
+      if (audioContext) {
+        audioContext.close().catch(function () {});
+        audioContext = null;
+        analyser = null;
+      }
+    }
+
+    function startMeter(mediaStream) {
+      stopMeter();
+      const audioTracks = mediaStream.getAudioTracks();
+      if (!audioTracks.length) return;
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      audioContext = new AudioCtx();
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      const source = audioContext.createMediaStreamSource(mediaStream);
+      source.connect(analyser);
+      const data = new Uint8Array(analyser.frequencyBinCount);
+
+      function tick() {
+        analyser.getByteTimeDomainData(data);
+        let sum = 0;
+        for (let i = 0; i < data.length; i++) {
+          const v = (data[i] - 128) / 128;
+          sum += v * v;
         }
+        const rms = Math.sqrt(sum / data.length);
+        meterBar.style.width = Math.min(100, Math.round(rms * 280)) + "%";
+        meterRaf = requestAnimationFrame(tick);
+      }
+      tick();
+    }
 
-        function deviceChange(){
-            const audioSource = document.querySelector("#audio_device").value;
-            const videoSource = document.querySelector("#video_device").value;
-            const constraints = {
-                audio: {deviceId: audioSource ? {exact: audioSource} : true},
-                video: {deviceId: videoSource ? {exact: videoSource} : true}
-            };
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(function(stream){
-                    document.querySelector("#video_stream").srcObject = stream;
-                })
-                .catch(function(e) {
-                    console.log("Something went wrong!");
-                });
+    function applyMonitor() {
+      video.muted = monitorBtn.getAttribute("aria-pressed") !== "true";
+    }
+
+    async function getStream(constraints) {
+      try {
+        return await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (err) {
+        if (constraints.audio && constraints.video) {
+          return navigator.mediaDevices.getUserMedia({ video: constraints.video, audio: false });
         }
-    </script>
-    <body onload="main();">
-        <div id="device_selectors">
-            <div class="device_selector">
-                <label for="video_device">VIDEO DEVICE:</label>
-                <select id="video_device" onchange="deviceChange();"></select>
-            </div>
-            <div class="device_selector">
-                <label for="audio_device">AUDIO DEVICE:</label>
-                <select id="audio_device" onchange="deviceChange();"></select>
-            </div>
-        </div>
-        <div id="video_container" style="position:relative;">
-            <video id="video_stream" height="100%" width=auto autoplay playsinline></video>
-        </div>
-    </body>
+        throw err;
+      }
+    }
+
+    async function startStream(constraints) {
+      if (!mediaSupported()) {
+        setOverlay(
+          "Camera unavailable",
+          "This page needs a secure context (HTTPS or localhost) and a browser that supports camera access."
+        );
+        return;
+      }
+      if (starting) return;
+      starting = true;
+      startBtn.disabled = true;
+      try {
+        const next = await getStream(constraints);
+        stopTracks(stream);
+        stream = next;
+        video.srcObject = stream;
+        applyMonitor();
+        await video.play().catch(function () {});
+        hideOverlay();
+        snapshotBtn.disabled = !stream.getVideoTracks().length;
+        fullscreenBtn.disabled = false;
+        startBtn.textContent = "Restart";
+        await refreshDevices(currentIds());
+        startMeter(stream);
+        describeStream();
+      } catch (err) {
+        const name = err && err.name;
+        if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+          setOverlay("Permission denied", "Camera or microphone access was blocked. Allow access in the browser, then try again.", err.message);
+        } else if (name === "NotFoundError" || name === "DevicesNotFoundError") {
+          setOverlay("No devices found", "This computer does not appear to have a camera or microphone the browser can use.", err.message);
+        } else if (name === "NotReadableError" || name === "TrackStartError") {
+          setOverlay("Device busy", "Another application may already be using the camera.", err.message);
+        } else if (name === "OverconstrainedError") {
+          setOverlay("Device unavailable", "The selected device could not be opened. Pick another device and try again.", err.message);
+        } else {
+          setOverlay("Could not start camera", "The browser could not open the selected capture devices.", err && err.message);
+        }
+      } finally {
+        starting = false;
+        startBtn.disabled = false;
+      }
+    }
+
+    function constraintsFromUi() {
+      const videoId = videoSelect.value;
+      const audioId = audioSelect.value;
+      return {
+        video: videoId ? { deviceId: { exact: videoId } } : true,
+        audio: audioId ? { deviceId: { exact: audioId } } : true
+      };
+    }
+
+    function startPreferred() {
+      return startStream({ video: true, audio: true });
+    }
+
+    function togglePressed(button) {
+      const pressed = button.getAttribute("aria-pressed") === "true";
+      button.setAttribute("aria-pressed", pressed ? "false" : "true");
+      return !pressed;
+    }
+
+    startBtn.addEventListener("click", function () {
+      if (videoSelect.value || audioSelect.value) startStream(constraintsFromUi());
+      else startPreferred();
+    });
+
+    videoSelect.addEventListener("change", function () { startStream(constraintsFromUi()); });
+    audioSelect.addEventListener("change", function () { startStream(constraintsFromUi()); });
+
+    mirrorBtn.addEventListener("click", function () {
+      video.classList.toggle("mirror", togglePressed(mirrorBtn));
+    });
+
+    monitorBtn.addEventListener("click", function () {
+      togglePressed(monitorBtn);
+      applyMonitor();
+      if (audioContext && audioContext.state === "suspended") audioContext.resume();
+    });
+
+    snapshotBtn.addEventListener("click", function () {
+      if (!stream || !video.videoWidth) return;
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      if (video.classList.contains("mirror")) {
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+      }
+      ctx.drawImage(video, 0, 0);
+      canvas.toBlob(function (blob) {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+        a.href = url;
+        a.download = "webcam-" + stamp + ".png";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 0);
+      }, "image/png");
+    });
+
+    fullscreenBtn.addEventListener("click", async function () {
+      try {
+        if (document.fullscreenElement) await document.exitFullscreen();
+        else await stage.requestFullscreen();
+      } catch (err) {}
+    });
+
+    if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
+      navigator.mediaDevices.addEventListener("devicechange", function () {
+        refreshDevices(currentIds()).catch(function () {});
+      });
+    }
+
+    window.addEventListener("beforeunload", function () {
+      stopMeter();
+      stopTracks(stream);
+    });
+
+    if (!mediaSupported()) {
+      startBtn.disabled = true;
+      setOverlay(
+        "Camera unavailable",
+        "This page needs a secure context (HTTPS or localhost) and a browser that supports camera access."
+      );
+    } else {
+      refreshDevices().catch(function () {});
+      startPreferred();
+    }
+  </script>
+</body>
 </html>
