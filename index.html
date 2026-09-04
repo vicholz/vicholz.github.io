@@ -1,27 +1,580 @@
-<html>
-  <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MQ40YCP73V"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>vicholz · pages</title>
+  <meta name="description" content="Directory of Victor's GitHub repositories that publish live GitHub Pages sites.">
+  <meta name="theme-color" content="#101214">
+  <link rel="icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MQ40YCP73V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MQ40YCP73V');
+    gtag('config', 'G-Y7K089ZY70');
+  </script>
+  <style>
+    :root {
+      --bg: #101214;
+      --bg-2: #161a1d;
+      --card: #1b2126;
+      --card-hover: #22292f;
+      --line: #2c343c;
+      --text: #ece6dc;
+      --muted: #9a9388;
+      --faint: #6f6a62;
+      --brass: #d4a056;
+      --brass-2: #f0c27a;
+      --ink: #0b0d0f;
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+      --radius: 16px;
+    }
 
-      gtag('config', 'G-MQ40YCP73V');
-    </script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+    * { box-sizing: border-box; }
 
-      gtag('config', 'G-Y7K089ZY70');
-    </script>
-    <script>
-      if (!location.href.split("#")[1] || !location.href.split("?")[1]){
-        location.href = "https://github.com/vicholz";
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    body {
+      background-image:
+        radial-gradient(1200px 500px at 8% -10%, rgba(212, 160, 86, 0.08), transparent 55%),
+        linear-gradient(rgba(44, 52, 60, 0.55) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(44, 52, 60, 0.55) 1px, transparent 1px);
+      background-size: auto, 48px 48px, 48px 48px;
+    }
+
+    a { color: inherit; }
+
+    .wrap {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 28px 0 80px;
+    }
+
+    header.top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      font-family: Syne, sans-serif;
+      font-weight: 800;
+      font-size: 1.35rem;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-mark span { color: var(--brass); }
+
+    .github-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(16, 18, 20, 0.72);
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 500;
+    }
+
+    .github-link:hover,
+    .github-link:focus-visible {
+      border-color: var(--brass);
+      color: var(--brass-2);
+      outline: none;
+    }
+
+    .github-link svg { width: 16px; height: 16px; fill: currentColor; }
+    .label-narrow { display: none; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr;
+      gap: 32px;
+      padding: 42px 0 28px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-family: Syne, sans-serif;
+      font-size: clamp(2.4rem, 5vw, 4.1rem);
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      line-height: 0.95;
+    }
+
+    .lede {
+      max-width: 38rem;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .stat {
+      align-self: end;
+      justify-self: end;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(27, 33, 38, 0.78);
+      min-width: 180px;
+    }
+
+    .stat b {
+      display: block;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: var(--brass-2);
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin: 8px 0 22px;
+    }
+
+    .search {
+      flex: 1;
+      position: relative;
+    }
+
+    .search input {
+      width: 100%;
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--bg-2);
+      color: var(--text);
+      padding: 12px 14px 12px 40px;
+      font: inherit;
+    }
+
+    .search input:focus-visible {
+      outline: 2px solid var(--brass);
+      outline-offset: 1px;
+      border-color: var(--brass);
+    }
+
+    .search svg {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      stroke: var(--faint);
+      fill: none;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 220px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: none;
+      text-decoration: none;
+      transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+    }
+
+    .card-hit {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      border-radius: inherit;
+    }
+
+    .card:hover,
+    .card:focus-within {
+      transform: translateY(-3px);
+      background: var(--card-hover);
+      border-color: #3d4852;
+      box-shadow: var(--shadow);
+    }
+
+    .card-hit:focus-visible {
+      outline: 2px solid var(--brass);
+      outline-offset: 2px;
+    }
+
+    .card-kicker {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      color: var(--faint);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--brass);
+    }
+
+    h2 {
+      margin: 14px 0 8px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 1.12rem;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      flex: 1;
+    }
+
+    .card-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--faint);
+      font-size: 0.82rem;
+    }
+
+    .open {
+      color: var(--brass-2);
+      font-weight: 600;
+    }
+
+    .source {
+      position: relative;
+      z-index: 2;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .source:hover,
+    .source:focus-visible { color: var(--text); }
+
+    .empty, .status {
+      grid-column: 1 / -1;
+      padding: 36px 20px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .site-tools {
+      margin-top: 48px;
+    }
+
+    .site-tools h3 {
+      margin: 0 0 14px;
+      font-family: Syne, sans-serif;
+      font-size: 1.2rem;
+    }
+
+    .site-tools ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .site-tools a {
+      display: block;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(22, 26, 29, 0.8);
+      text-decoration: none;
+    }
+
+    .site-tools a:hover { border-color: var(--brass); }
+    .site-tools strong { display: block; }
+    .site-tools span { color: var(--muted); font-size: 0.88rem; }
+
+    footer {
+      margin-top: 56px;
+      color: var(--faint);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero, .grid, .site-tools ul { grid-template-columns: 1fr 1fr; }
+      .stat { justify-self: start; }
+    }
+
+    @media (max-width: 640px) {
+      .wrap { width: min(1120px, calc(100% - 28px)); }
+      header.top { align-items: flex-start; }
+      .hero, .grid, .site-tools ul { grid-template-columns: 1fr; }
+      .label-wide { display: none; }
+      .label-narrow { display: inline; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card { transition: none; }
+      .card:hover, .card:focus-visible { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="./">
+        <span class="brand-mark">vic<span>holz</span></span>
+      </a>
+      <a class="github-link" href="https://github.com/vicholz" rel="noopener noreferrer" aria-label="github.com/vicholz">
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.6 7.6 0 0 1 8 4.07c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+        </svg>
+        <span class="label-wide">github.com/vicholz</span>
+        <span class="label-narrow">GitHub</span>
+      </a>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h1>Pages directory</h1>
+        <p class="lede">Live sites from repositories with GitHub Pages. Open a card to use the app, or jump to the source on GitHub.</p>
+      </div>
+      <div class="stat" aria-live="polite">
+        <b id="count">—</b>
+        <span>repos with pages</span>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <label class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="q" type="search" placeholder="Filter by name, language, or description" autocomplete="off">
+      </label>
+    </div>
+
+    <div id="grid" class="grid" aria-live="polite">
+      <div class="status">Loading GitHub Pages repos…</div>
+    </div>
+
+    <section class="site-tools">
+      <h3>Also on this site</h3>
+      <ul>
+        <li>
+          <a href="simple_autounattend.html">
+            <strong>simple_autounattend</strong>
+            <span>Windows unattended answer-file generator</span>
+          </a>
+        </li>
+        <li>
+          <a href="viewhtml.html">
+            <strong>viewhtml</strong>
+            <span>Fetch and render a remote HTML document</span>
+          </a>
+        </li>
+        <li>
+          <a href="webcam.html">
+            <strong>webcam</strong>
+            <span>Local camera and microphone preview</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <footer>
+      Built from the public GitHub API for <a href="https://github.com/vicholz">github.com/vicholz</a>.
+    </footer>
+  </div>
+
+  <script>
+    const USER = "vicholz";
+    const SITE_REPO = "vicholz.github.io";
+    const FALLBACK_DESCRIPTIONS = {
+      livestream_tools: "Livestream title generator with date stamps and day-specific names.",
+      label_maker: "Printable Avery 5160 / 8160 address label maker.",
+      tuxmate: "Simplified vanilla JS remake of Tuxmate."
+    };
+    const LANG_COLORS = {
+      JavaScript: "#f1e05a",
+      TypeScript: "#3178c6",
+      HTML: "#e34c26",
+      CSS: "#563d7c",
+      Python: "#3572a5",
+      Shell: "#89e051"
+    };
+    const FALLBACK = [
+      { name: "toazw3", description: "Convert EPUB and MOBI to Kindle AZW3 in the browser", language: "JavaScript", html_url: "https://github.com/vicholz/toazw3", homepage: "https://vicholz.github.io/toazw3/", pushed_at: "2026-09-04T05:34:58Z", fork: false },
+      { name: "qr_maker", description: "Browser QR code creator and scanner for text, Wi-Fi, contacts, and more.", language: "JavaScript", html_url: "https://github.com/vicholz/qr_maker", homepage: "https://vicholz.github.io/qr_maker/", pushed_at: "2026-09-03T19:42:05Z", fork: false },
+      { name: "fold", description: "Vanilla HTML/CSS/JS designer for bi-fold hanging paper calendars", language: "JavaScript", html_url: "https://github.com/vicholz/fold", homepage: "https://vicholz.github.io/fold/", pushed_at: "2026-08-29T23:10:03Z", fork: false },
+      { name: "livestream_tools", description: FALLBACK_DESCRIPTIONS.livestream_tools, language: "HTML", html_url: "https://github.com/vicholz/livestream_tools", homepage: "https://vicholz.github.io/livestream_tools/", pushed_at: "2026-08-09T03:32:23Z", fork: false },
+      { name: "tuxmate", description: FALLBACK_DESCRIPTIONS.tuxmate, language: "TypeScript", html_url: "https://github.com/vicholz/tuxmate", homepage: "https://vicholz.github.io/tuxmate/", pushed_at: "2026-01-31T07:39:09Z", fork: true },
+      { name: "chirp_web", description: "Web based Javascript CHIRP Radio Tool Implementation", language: "JavaScript", html_url: "https://github.com/vicholz/chirp_web", homepage: "https://vicholz.github.io/chirp_web/", pushed_at: "2026-01-20T06:43:36Z", fork: false },
+      { name: "debloat_android", description: "Universal Android De-bloater", language: "JavaScript", html_url: "https://github.com/vicholz/debloat_android", homepage: "https://vicholz.github.io/debloat_android/", pushed_at: "2026-01-19T07:37:05Z", fork: false },
+      { name: "label_maker", description: FALLBACK_DESCRIPTIONS.label_maker, language: "HTML", html_url: "https://github.com/vicholz/label_maker", homepage: "https://vicholz.github.io/label_maker/", pushed_at: "2025-12-07T06:33:01Z", fork: false }
+    ];
+
+    const grid = document.getElementById("grid");
+    const countEl = document.getElementById("count");
+    const search = document.getElementById("q");
+    let repos = [];
+
+    function pagesUrl(repo) {
+      if (repo.homepage && /vicholz\.github\.io/.test(repo.homepage)) {
+        return repo.homepage.endsWith("/") ? repo.homepage : repo.homepage + "/";
       }
-    </script>
-  </head>
-  <body>
-  </body>
+      return "https://" + USER + ".github.io/" + repo.name + "/";
+    }
+
+    function relativeTime(iso) {
+      if (!iso) return "updated recently";
+      const delta = Date.parse(iso) - Date.now();
+      const abs = Math.abs(delta);
+      const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+      const units = [
+        ["year", 31536000000],
+        ["month", 2628000000],
+        ["week", 604800000],
+        ["day", 86400000],
+        ["hour", 3600000],
+        ["minute", 60000]
+      ];
+      for (const [unit, ms] of units) {
+        if (abs >= ms || unit === "minute") return rtf.format(Math.round(delta / ms), unit);
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function descriptionFor(repo) {
+      const fallback = FALLBACK_DESCRIPTIONS[repo.name];
+      const desc = (repo.description || "").trim();
+      if (!desc) return fallback || "GitHub Pages project.";
+      if (fallback && fallback.length > desc.length + 8) return fallback;
+      return desc;
+    }
+
+    function render(list) {
+      countEl.textContent = String(repos.length);
+      if (!list.length) {
+        grid.innerHTML = '<div class="empty">No pages match that filter.</div>';
+        return;
+      }
+      grid.innerHTML = list.map(function (repo) {
+        const description = descriptionFor(repo);
+        const lang = repo.language || "Pages";
+        const color = LANG_COLORS[lang] || "#d4a056";
+        const site = pagesUrl(repo);
+        return (
+          '<article class="card">' +
+            '<a class="card-hit" href="' + escapeHtml(site) + '" aria-label="Open ' + escapeHtml(repo.name) + '"></a>' +
+            '<div class="card-kicker">' +
+              '<span>' + (repo.fork ? "fork" : "project") + ' · ' + escapeHtml(relativeTime(repo.pushed_at)) + '</span>' +
+              '<span class="pill"><span class="dot" style="background:' + color + '"></span>' + escapeHtml(lang) + '</span>' +
+            '</div>' +
+            '<h2>' + escapeHtml(repo.name) + '</h2>' +
+            '<p>' + escapeHtml(description) + '</p>' +
+            '<div class="card-foot">' +
+              '<span class="open">Open site →</span>' +
+              '<a class="source" href="' + escapeHtml(repo.html_url) + '" rel="noopener noreferrer">Source</a>' +
+            '</div>' +
+          '</article>'
+        );
+      }).join("");
+    }
+
+    function applyFilter() {
+      const q = search.value.trim().toLowerCase();
+      if (!q) return render(repos);
+      render(repos.filter(function (repo) {
+        const hay = [repo.name, repo.description, repo.language, FALLBACK_DESCRIPTIONS[repo.name]]
+          .filter(Boolean).join(" ").toLowerCase();
+        return hay.indexOf(q) !== -1;
+      }));
+    }
+
+    function normalize(items) {
+      return items
+        .filter(function (repo) { return repo.has_pages && repo.name !== SITE_REPO && !repo.private; })
+        .sort(function (a, b) { return Date.parse(b.pushed_at) - Date.parse(a.pushed_at); });
+    }
+
+    async function load() {
+      try {
+        const res = await fetch("https://api.github.com/users/" + USER + "/repos?per_page=100&sort=updated");
+        if (!res.ok) throw new Error("GitHub API " + res.status);
+        const data = await res.json();
+        repos = normalize(data);
+        if (!repos.length) repos = FALLBACK;
+      } catch (err) {
+        repos = FALLBACK;
+      }
+      applyFilter();
+    }
+
+    search.addEventListener("input", applyFilter);
+    load();
+  </script>
+</body>
 </html>
