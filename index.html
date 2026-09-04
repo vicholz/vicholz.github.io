@@ -387,7 +387,8 @@
     const FALLBACK_DESCRIPTIONS = {
       livestream_tools: "Livestream title generator with date stamps and day-specific names.",
       label_maker: "Printable Avery 5160 / 8160 address label maker.",
-      tuxmate: "Simplified vanilla JS remake of Tuxmate."
+      tuxmate: "Simplified vanilla JS remake of Tuxmate.",
+      UnattendedWinstall: "Browser customizer for the UnattendedWinstall autounattend.xml answer file."
     };
     const LANG_COLORS = {
       JavaScript: "#f1e05a",
@@ -398,14 +399,15 @@
       Shell: "#89e051"
     };
     const FALLBACK = [
-      { name: "toazw3", description: "Convert EPUB and MOBI to Kindle AZW3 in the browser", language: "JavaScript", html_url: "https://github.com/vicholz/toazw3", homepage: "https://vicholz.github.io/toazw3/", pushed_at: "2026-09-04T05:34:58Z", fork: false },
-      { name: "qr_maker", description: "Browser QR code creator and scanner for text, Wi-Fi, contacts, and more.", language: "JavaScript", html_url: "https://github.com/vicholz/qr_maker", homepage: "https://vicholz.github.io/qr_maker/", pushed_at: "2026-09-03T19:42:05Z", fork: false },
-      { name: "fold", description: "Vanilla HTML/CSS/JS designer for bi-fold hanging paper calendars", language: "JavaScript", html_url: "https://github.com/vicholz/fold", homepage: "https://vicholz.github.io/fold/", pushed_at: "2026-08-29T23:10:03Z", fork: false },
-      { name: "livestream_tools", description: FALLBACK_DESCRIPTIONS.livestream_tools, language: "HTML", html_url: "https://github.com/vicholz/livestream_tools", homepage: "https://vicholz.github.io/livestream_tools/", pushed_at: "2026-08-09T03:32:23Z", fork: false },
-      { name: "tuxmate", description: FALLBACK_DESCRIPTIONS.tuxmate, language: "TypeScript", html_url: "https://github.com/vicholz/tuxmate", homepage: "https://vicholz.github.io/tuxmate/", pushed_at: "2026-01-31T07:39:09Z", fork: true },
       { name: "chirp_web", description: "Web based Javascript CHIRP Radio Tool Implementation", language: "JavaScript", html_url: "https://github.com/vicholz/chirp_web", homepage: "https://vicholz.github.io/chirp_web/", pushed_at: "2026-01-20T06:43:36Z", fork: false },
       { name: "debloat_android", description: "Universal Android De-bloater", language: "JavaScript", html_url: "https://github.com/vicholz/debloat_android", homepage: "https://vicholz.github.io/debloat_android/", pushed_at: "2026-01-19T07:37:05Z", fork: false },
-      { name: "label_maker", description: FALLBACK_DESCRIPTIONS.label_maker, language: "HTML", html_url: "https://github.com/vicholz/label_maker", homepage: "https://vicholz.github.io/label_maker/", pushed_at: "2025-12-07T06:33:01Z", fork: false }
+      { name: "fold", description: "Vanilla HTML/CSS/JS designer for bi-fold hanging paper calendars", language: "JavaScript", html_url: "https://github.com/vicholz/fold", homepage: "https://vicholz.github.io/fold/", pushed_at: "2026-08-29T23:10:03Z", fork: false },
+      { name: "label_maker", description: FALLBACK_DESCRIPTIONS.label_maker, language: "HTML", html_url: "https://github.com/vicholz/label_maker", homepage: "https://vicholz.github.io/label_maker/", pushed_at: "2025-12-07T06:33:01Z", fork: false },
+      { name: "livestream_tools", description: FALLBACK_DESCRIPTIONS.livestream_tools, language: "HTML", html_url: "https://github.com/vicholz/livestream_tools", homepage: "https://vicholz.github.io/livestream_tools/", pushed_at: "2026-08-09T03:32:23Z", fork: false },
+      { name: "qr_maker", description: "Browser QR code creator and scanner for text, Wi-Fi, contacts, and more.", language: "JavaScript", html_url: "https://github.com/vicholz/qr_maker", homepage: "https://vicholz.github.io/qr_maker/", pushed_at: "2026-09-03T19:42:05Z", fork: false },
+      { name: "toazw3", description: "Convert EPUB and MOBI to Kindle AZW3 in the browser", language: "JavaScript", html_url: "https://github.com/vicholz/toazw3", homepage: "https://vicholz.github.io/toazw3/", pushed_at: "2026-09-04T05:34:58Z", fork: false },
+      { name: "tuxmate", description: FALLBACK_DESCRIPTIONS.tuxmate, language: "TypeScript", html_url: "https://github.com/vicholz/tuxmate", homepage: "https://vicholz.github.io/tuxmate/", pushed_at: "2026-01-31T07:39:09Z", fork: true },
+      { name: "UnattendedWinstall", description: FALLBACK_DESCRIPTIONS.UnattendedWinstall, language: "JavaScript", html_url: "https://github.com/vicholz/UnattendedWinstall", homepage: "https://vicholz.github.io/UnattendedWinstall/", pushed_at: "2026-09-04T00:00:00Z", fork: false }
     ];
 
     const grid = document.getElementById("grid");
@@ -494,7 +496,7 @@
     function normalize(items) {
       return items
         .filter(function (repo) { return repo.has_pages && repo.name !== SITE_REPO && !repo.private; })
-        .sort(function (a, b) { return Date.parse(b.pushed_at) - Date.parse(a.pushed_at); });
+        .sort(function (a, b) { return a.name.localeCompare(b.name, undefined, { sensitivity: "base" }); });
     }
 
     async function load() {
