@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>vicholz · pages</title>
+  <title>TOOLS</title>
   <meta name="description" content="Directory of Victor's GitHub repositories that publish live GitHub Pages sites.">
   <meta name="theme-color" content="#101214">
   <link rel="icon" href="favicon.ico">
@@ -86,8 +86,6 @@
       letter-spacing: -0.04em;
     }
 
-    .brand-mark span { color: var(--brass); }
-
     .github-link {
       display: inline-flex;
       align-items: center;
@@ -112,57 +110,11 @@
     .github-link svg { width: 16px; height: 16px; fill: currentColor; }
     .label-narrow { display: none; }
 
-    .hero {
-      display: grid;
-      grid-template-columns: 1.4fr 0.8fr;
-      gap: 32px;
-      padding: 42px 0 28px;
-    }
-
-    h1 {
-      margin: 0 0 10px;
-      font-family: Syne, sans-serif;
-      font-size: clamp(2.4rem, 5vw, 4.1rem);
-      font-weight: 800;
-      letter-spacing: -0.05em;
-      line-height: 0.95;
-    }
-
-    .lede {
-      max-width: 38rem;
-      margin: 0;
-      color: var(--muted);
-      font-size: 1.05rem;
-    }
-
-    .stat {
-      align-self: end;
-      justify-self: end;
-      padding: 16px 18px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(27, 33, 38, 0.78);
-      min-width: 180px;
-    }
-
-    .stat b {
-      display: block;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 1.8rem;
-      font-weight: 500;
-      color: var(--brass-2);
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
     .toolbar {
       display: flex;
       gap: 12px;
       align-items: center;
-      margin: 8px 0 22px;
+      margin: 28px 0 22px;
     }
 
     .search {
@@ -358,14 +310,12 @@
     }
 
     @media (max-width: 900px) {
-      .hero, .grid, .site-tools ul { grid-template-columns: 1fr 1fr; }
-      .stat { justify-self: start; }
+      .grid, .site-tools ul { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 640px) {
       .wrap { width: min(1120px, calc(100% - 28px)); }
-      header.top { align-items: flex-start; }
-      .hero, .grid, .site-tools ul { grid-template-columns: 1fr; }
+      .grid, .site-tools ul { grid-template-columns: 1fr; }
       .label-wide { display: none; }
       .label-narrow { display: inline; }
     }
@@ -380,7 +330,7 @@
   <div class="wrap">
     <header class="top">
       <a class="brand" href="./">
-        <span class="brand-mark">vic<span>holz</span></span>
+        <span class="brand-mark">TOOLS</span>
       </a>
       <a class="github-link" href="https://github.com/vicholz" rel="noopener noreferrer" aria-label="github.com/vicholz">
         <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -390,17 +340,6 @@
         <span class="label-narrow">GitHub</span>
       </a>
     </header>
-
-    <section class="hero">
-      <div>
-        <h1>Pages directory</h1>
-        <p class="lede">Live sites from repositories with GitHub Pages. Open a card to use the app, or jump to the source on GitHub.</p>
-      </div>
-      <div class="stat" aria-live="polite">
-        <b id="count">—</b>
-        <span>repos with pages</span>
-      </div>
-    </section>
 
     <div class="toolbar">
       <label class="search">
@@ -470,7 +409,6 @@
     ];
 
     const grid = document.getElementById("grid");
-    const countEl = document.getElementById("count");
     const search = document.getElementById("q");
     let repos = [];
 
@@ -516,7 +454,6 @@
     }
 
     function render(list) {
-      countEl.textContent = String(repos.length);
       if (!list.length) {
         grid.innerHTML = '<div class="empty">No pages match that filter.</div>';
         return;
