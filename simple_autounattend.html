@@ -94,6 +94,24 @@
       font-size: 0.85rem;
     }
 
+    .app-version {
+      margin: 0;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+      overflow-wrap: anywhere;
+    }
+
+    .app-version a {
+      color: inherit;
+      font-family: "IBM Plex Mono", monospace;
+      text-underline-offset: 2px;
+    }
+
+    .app-version a:hover {
+      color: var(--brass);
+    }
+
     .lede {
       max-width: 46rem;
       margin: 28px 0 0;
@@ -289,6 +307,7 @@
         <span class="brand-mark">TOOLS</span>
         <span class="brand-sub">/ autounattend</span>
       </a>
+      <p class="app-version" id="app-version" hidden></p>
     </header>
 
     <div class="lede">
@@ -367,6 +386,39 @@
   </div>
 
   <script>
+    const APP_REPO = "vicholz/vicholz.github.io";
+    const APP_VERSION_FALLBACK_SHA = "540cdc4f2969a1f7be242ec4a0768f58ddc903f0";
+
+    function renderAppVersion(sha) {
+      const el = document.querySelector("#app-version");
+      if (!el || !sha) return;
+      el.replaceChildren();
+      el.append("Version ");
+      const a = document.createElement("a");
+      a.href = "https://github.com/" + APP_REPO + "/commit/" + sha;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = sha.slice(0, 7);
+      a.title = "View the diff for this version";
+      el.appendChild(a);
+      el.hidden = false;
+    }
+
+    function loadAppVersion() {
+      renderAppVersion(APP_VERSION_FALLBACK_SHA);
+      fetch("https://api.github.com/repos/" + APP_REPO + "/commits/main")
+        .then(function (res) {
+          if (!res.ok) throw new Error(res.status);
+          return res.json();
+        })
+        .then(function (commit) {
+          if (commit.sha) renderAppVersion(commit.sha);
+        })
+        .catch(function () {});
+    }
+
+    loadAppVersion();
+
     const TIMEZONES = [
       ["Pacific Standard Time", "Pacific Time (US & Canada)"],
       ["Mountain Standard Time", "Mountain Time (US & Canada)"],

@@ -36,6 +36,7 @@
     }
 
     * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
 
     html, body {
       margin: 0;
@@ -214,6 +215,25 @@
       letter-spacing: 0;
     }
 
+    .version-wrap {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .version {
+      position: relative;
+      z-index: 2;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+      text-underline-offset: 2px;
+    }
+
+    .version:hover,
+    .version:focus-visible {
+      color: var(--brass-2);
+      outline: none;
+    }
+
     .dot {
       width: 8px;
       height: 8px;
@@ -290,7 +310,7 @@
       gap: 10px;
     }
 
-    .site-tools a {
+    .site-tool {
       display: block;
       padding: 14px 16px;
       border: 1px solid var(--line);
@@ -299,9 +319,25 @@
       text-decoration: none;
     }
 
-    .site-tools a:hover { border-color: var(--brass); }
-    .site-tools strong { display: block; }
-    .site-tools span { color: var(--muted); font-size: 0.88rem; }
+    .site-tool:hover,
+    .site-tool:focus-within { border-color: var(--brass); }
+    .site-tool > a { display: block; text-decoration: none; }
+    .site-tool strong { display: block; }
+    .site-tool .tool-desc { display: block; color: var(--muted); font-size: 0.88rem; }
+    .site-tool .tool-version {
+      display: block;
+      margin-top: 6px;
+      color: var(--faint);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.02em;
+    }
+    .site-tool .tool-version a {
+      color: inherit;
+      text-underline-offset: 2px;
+    }
+    .site-tool .tool-version a:hover,
+    .site-tool .tool-version a:focus-visible { color: var(--brass-2); }
 
     footer {
       margin-top: 56px;
@@ -356,22 +392,31 @@
       <h3>Also on this site</h3>
       <ul>
         <li>
-          <a href="simple_autounattend.html">
-            <strong>simple_autounattend</strong>
-            <span>Windows unattended answer-file generator</span>
-          </a>
+          <div class="site-tool">
+            <a href="simple_autounattend.html">
+              <strong>simple_autounattend</strong>
+              <span class="tool-desc">Windows unattended answer-file generator</span>
+            </a>
+            <span class="tool-version" data-site-version hidden></span>
+          </div>
         </li>
         <li>
-          <a href="viewhtml.html">
-            <strong>viewhtml</strong>
-            <span>Fetch and render a remote HTML document</span>
-          </a>
+          <div class="site-tool">
+            <a href="viewhtml.html">
+              <strong>viewhtml</strong>
+              <span class="tool-desc">Fetch and render a remote HTML document</span>
+            </a>
+            <span class="tool-version" data-site-version hidden></span>
+          </div>
         </li>
         <li>
-          <a href="webcam.html">
-            <strong>webcam</strong>
-            <span>Local camera and microphone preview</span>
-          </a>
+          <div class="site-tool">
+            <a href="webcam.html">
+              <strong>webcam</strong>
+              <span class="tool-desc">Local camera and microphone preview</span>
+            </a>
+            <span class="tool-version" data-site-version hidden></span>
+          </div>
         </li>
       </ul>
     </section>
@@ -398,16 +443,17 @@
       Python: "#3572a5",
       Shell: "#89e051"
     };
+    const SITE_VERSION_FALLBACK_SHA = "540cdc4f2969a1f7be242ec4a0768f58ddc903f0";
     const FALLBACK = [
-      { name: "chirp_web", description: "Web based Javascript CHIRP Radio Tool Implementation", language: "JavaScript", html_url: "https://github.com/vicholz/chirp_web", homepage: "https://vicholz.github.io/chirp_web/", pushed_at: "2026-01-20T06:43:36Z", fork: false },
-      { name: "debloat_android", description: "Universal Android De-bloater", language: "JavaScript", html_url: "https://github.com/vicholz/debloat_android", homepage: "https://vicholz.github.io/debloat_android/", pushed_at: "2026-01-19T07:37:05Z", fork: false },
-      { name: "fold", description: "Vanilla HTML/CSS/JS designer for bi-fold hanging paper calendars", language: "JavaScript", html_url: "https://github.com/vicholz/fold", homepage: "https://vicholz.github.io/fold/", pushed_at: "2026-08-29T23:10:03Z", fork: false },
-      { name: "label_maker", description: FALLBACK_DESCRIPTIONS.label_maker, language: "HTML", html_url: "https://github.com/vicholz/label_maker", homepage: "https://vicholz.github.io/label_maker/", pushed_at: "2025-12-07T06:33:01Z", fork: false },
-      { name: "livestream_tools", description: FALLBACK_DESCRIPTIONS.livestream_tools, language: "HTML", html_url: "https://github.com/vicholz/livestream_tools", homepage: "https://vicholz.github.io/livestream_tools/", pushed_at: "2026-08-09T03:32:23Z", fork: false },
-      { name: "qr_maker", description: "Browser QR code creator and scanner for text, Wi-Fi, contacts, and more.", language: "JavaScript", html_url: "https://github.com/vicholz/qr_maker", homepage: "https://vicholz.github.io/qr_maker/", pushed_at: "2026-09-03T19:42:05Z", fork: false },
-      { name: "toazw3", description: "Convert EPUB and MOBI to Kindle AZW3 in the browser", language: "JavaScript", html_url: "https://github.com/vicholz/toazw3", homepage: "https://vicholz.github.io/toazw3/", pushed_at: "2026-09-04T05:34:58Z", fork: false },
-      { name: "tuxmate", description: FALLBACK_DESCRIPTIONS.tuxmate, language: "TypeScript", html_url: "https://github.com/vicholz/tuxmate", homepage: "https://vicholz.github.io/tuxmate/", pushed_at: "2026-01-31T07:39:09Z", fork: true },
-      { name: "UnattendedWinstall", description: FALLBACK_DESCRIPTIONS.UnattendedWinstall, language: "JavaScript", html_url: "https://github.com/vicholz/UnattendedWinstall", homepage: "https://vicholz.github.io/UnattendedWinstall/", pushed_at: "2026-09-04T00:00:00Z", fork: false }
+      { name: "chirp_web", description: "Web based Javascript CHIRP Radio Tool Implementation", language: "JavaScript", html_url: "https://github.com/vicholz/chirp_web", homepage: "https://vicholz.github.io/chirp_web/", pushed_at: "2026-01-20T06:43:36Z", fork: false, default_branch: "main", sha: "6a2302c6103404d328e824425fc71de58018bec1" },
+      { name: "debloat_android", description: "Universal Android De-bloater", language: "JavaScript", html_url: "https://github.com/vicholz/debloat_android", homepage: "https://vicholz.github.io/debloat_android/", pushed_at: "2026-01-19T07:37:05Z", fork: false, default_branch: "main", sha: "f7b1cb85fc3fcb4d5a7b3f39e8f3c1dc8a2d04d3" },
+      { name: "fold", description: "Vanilla HTML/CSS/JS designer for bi-fold hanging paper calendars", language: "JavaScript", html_url: "https://github.com/vicholz/fold", homepage: "https://vicholz.github.io/fold/", pushed_at: "2026-08-29T23:10:03Z", fork: false, default_branch: "main", sha: "336fa6060661bddc44e7e680c6aa9156e5a8dba2" },
+      { name: "label_maker", description: FALLBACK_DESCRIPTIONS.label_maker, language: "HTML", html_url: "https://github.com/vicholz/label_maker", homepage: "https://vicholz.github.io/label_maker/", pushed_at: "2025-12-07T06:33:01Z", fork: false, default_branch: "main", sha: "ebe12b8d984857d0df35bede5f8f78ef6a576802" },
+      { name: "livestream_tools", description: FALLBACK_DESCRIPTIONS.livestream_tools, language: "HTML", html_url: "https://github.com/vicholz/livestream_tools", homepage: "https://vicholz.github.io/livestream_tools/", pushed_at: "2026-08-09T03:32:23Z", fork: false, default_branch: "main", sha: "8ce50a23fd680350da56c65b2166643ec660a113" },
+      { name: "qr_maker", description: "Browser QR code creator and scanner for text, Wi-Fi, contacts, and more.", language: "JavaScript", html_url: "https://github.com/vicholz/qr_maker", homepage: "https://vicholz.github.io/qr_maker/", pushed_at: "2026-09-03T19:42:05Z", fork: false, default_branch: "main", sha: "c307bbcbc36636240c98cac50054846f6965c669" },
+      { name: "toazw3", description: "Convert EPUB and MOBI to Kindle AZW3 in the browser", language: "JavaScript", html_url: "https://github.com/vicholz/toazw3", homepage: "https://vicholz.github.io/toazw3/", pushed_at: "2026-09-04T05:34:58Z", fork: false, default_branch: "main", sha: "aaaafd3deb2ec63b78c2c10709e9ebe841003ccc" },
+      { name: "tuxmate", description: FALLBACK_DESCRIPTIONS.tuxmate, language: "TypeScript", html_url: "https://github.com/vicholz/tuxmate", homepage: "https://vicholz.github.io/tuxmate/", pushed_at: "2026-01-31T07:39:09Z", fork: true, default_branch: "main", sha: "c36f4bf86f68f225f080e8fadce3d9a8784e4b97" },
+      { name: "UnattendedWinstall", description: FALLBACK_DESCRIPTIONS.UnattendedWinstall, language: "JavaScript", html_url: "https://github.com/vicholz/UnattendedWinstall", homepage: "https://vicholz.github.io/UnattendedWinstall/", pushed_at: "2026-09-04T00:00:00Z", fork: false, default_branch: "main", sha: "e77dde5becf1349867e31e3d3b48154bdcf19cfd" }
     ];
 
     const grid = document.getElementById("grid");
@@ -455,6 +501,57 @@
       return desc;
     }
 
+    function versionMarkup(sha, commitUrl) {
+      if (!sha) return "";
+      return (
+        '<span class="version-wrap">Version <a class="version" href="' +
+        escapeHtml(commitUrl) +
+        '" rel="noopener noreferrer" title="View the diff for this version">' +
+        escapeHtml(sha.slice(0, 7)) +
+        "</a></span>"
+      );
+    }
+
+    function kickerLeft(repo) {
+      const version = versionMarkup(repo.sha, repo.html_url + "/commit/" + repo.sha);
+      if (version) return version;
+      return "<span>" + (repo.fork ? "fork" : "project") + " · " + escapeHtml(relativeTime(repo.pushed_at)) + "</span>";
+    }
+
+    function renderSiteVersions(sha) {
+      const markup = versionMarkup(sha, "https://github.com/" + USER + "/" + SITE_REPO + "/commit/" + sha);
+      document.querySelectorAll("[data-site-version]").forEach(function (el) {
+        el.innerHTML = markup;
+        el.hidden = !markup;
+      });
+    }
+
+    function loadSiteToolVersion() {
+      renderSiteVersions(SITE_VERSION_FALLBACK_SHA);
+      fetch("https://api.github.com/repos/" + USER + "/" + SITE_REPO + "/commits/main")
+        .then(function (res) {
+          if (!res.ok) throw new Error(res.status);
+          return res.json();
+        })
+        .then(function (commit) {
+          if (commit.sha) renderSiteVersions(commit.sha);
+        })
+        .catch(function () {});
+    }
+
+    async function attachShas(list) {
+      await Promise.all(list.map(async function (repo) {
+        try {
+          const ref = repo.default_branch || "main";
+          const res = await fetch("https://api.github.com/repos/" + USER + "/" + repo.name + "/commits/" + encodeURIComponent(ref));
+          if (!res.ok) return;
+          const commit = await res.json();
+          if (commit.sha) repo.sha = commit.sha;
+        } catch (err) {}
+      }));
+      return list;
+    }
+
     function render(list) {
       if (!list.length) {
         grid.innerHTML = '<div class="empty">No pages match that filter.</div>';
@@ -469,7 +566,7 @@
           '<article class="card">' +
             '<a class="card-hit" href="' + escapeHtml(site) + '" aria-label="Open ' + escapeHtml(repo.name) + '"></a>' +
             '<div class="card-kicker">' +
-              '<span>' + (repo.fork ? "fork" : "project") + ' · ' + escapeHtml(relativeTime(repo.pushed_at)) + '</span>' +
+              kickerLeft(repo) +
               '<span class="pill"><span class="dot" style="background:' + color + '"></span>' + escapeHtml(lang) + '</span>' +
             '</div>' +
             '<h2>' + escapeHtml(repo.name) + '</h2>' +
@@ -487,7 +584,7 @@
       const q = search.value.trim().toLowerCase();
       if (!q) return render(repos);
       render(repos.filter(function (repo) {
-        const hay = [repo.name, repo.description, repo.language, FALLBACK_DESCRIPTIONS[repo.name]]
+        const hay = [repo.name, repo.description, repo.language, FALLBACK_DESCRIPTIONS[repo.name], repo.sha]
           .filter(Boolean).join(" ").toLowerCase();
         return hay.indexOf(q) !== -1;
       }));
@@ -505,11 +602,13 @@
         if (!res.ok) throw new Error("GitHub API " + res.status);
         const data = await res.json();
         repos = normalize(data);
-        if (!repos.length) repos = FALLBACK;
+        if (!repos.length) repos = FALLBACK.slice();
       } catch (err) {
-        repos = FALLBACK;
+        repos = FALLBACK.slice();
       }
       applyFilter();
+      attachShas(repos).then(function () { applyFilter(); });
+      loadSiteToolVersion();
     }
 
     search.addEventListener("input", applyFilter);
