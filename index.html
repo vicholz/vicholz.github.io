@@ -456,6 +456,15 @@
             <span class="tool-version" data-site-version hidden></span>
           </div>
         </li>
+        <li>
+          <div class="site-tool">
+            <a href="https://github.com/vicholz/github-pages-app-template">
+              <strong>github-pages-app-template</strong>
+              <span class="tool-desc">Template and skill for modern vanilla GitHub Pages apps</span>
+            </a>
+            <span class="tool-version" data-site-version hidden></span>
+          </div>
+        </li>
       </ul>
     </section>
 
@@ -528,10 +537,10 @@
 
     function escapeHtml(value) {
       return String(value == null ? "" : value)
-        .replace(/&/g, "&")
-        .replace(/</g, "<")
-        .replace(/>/g, ">")
-        .replace(/"/g, """);
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
     }
 
     function descriptionFor(repo) {
