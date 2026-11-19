@@ -1,0 +1,130 @@
+[
+  {
+    "name": "brackettier",
+    "description": "Browser tournament bracket maker with people pools, named brackets, and localStorage.",
+    "language": "JavaScript",
+    "html_url": "https://github.com/vicholz/brackettier",
+    "homepage": "https://vicholz.github.io/brackettier/",
+    "fork": false
+  },
+  {
+    "name": "chirp_web",
+    "description": "Web based Javascript CHIRP Radio Tool Implementation",
+    "language": "JavaScript",
+    "html_url": "https://github.com/vicholz/chirp_web",
+    "homepage": "https://vicholz.github.io/chirp_web/",
+    "fork": false
+  },
+  {
+    "name": "debloat_android",
+    "description": "Universal Android De-bloater",
+    "language": "JavaScript",
+    "html_url": "https://github.com/vicholz/debloat_android",
+    "homepage": "https://vicholz.github.io/debloat_android/",
+    "fork": false
+  },
+  {
+    "name": "ebook_converter",
+    "description": "Convert EPUB, MOBI, AZW3, CBZ, and CBR to AZW3, EPUB, or MOBI in the browser. Nothing is uploaded.",
+    "language": "JavaScript",
+    "html_url": "https://github.com/vicholz/ebook_converter",
+    "homepage": "https://vicholz.github.io/ebook_converter/",
+    "fork": false
+  },
+  {
+    "name": "fold",
+    "description": "Vanilla HTML/CSS/JS designer for bi-fold hanging paper calendars",
+    "language": "JavaScript",
+    "html_url": "https://github.com/vicholz/fold",
+    "homepage": "https://vicholz.github.io/fold/",
+    "fork": false
+  },
+  {
+    "name": "github-pages-app-template",
+    "description": "Template and skill for modern vanilla GitHub Pages apps",
+    "language": "JavaScript",
+    "html_url": "https://github.com/vicholz/github-pages-app-template",
+    "homepage": "https://vicholz.github.io/github-pages-app-template/",
+    "fork": false
+  },
+  {
+    "name": "label_maker",
+    "description": "Printable Avery 5160 / 8160 address label maker.",
+    "language": "HTML",
+    "html_url": "https://github.com/vicholz/label_maker",
+    "homepage": "https://vicholz.github.io/label_maker/",
+    "fork": false
+  },
+  {
+    "name": "livestream_tools",
+    "description": "Livestream title generator with date stamps and day-specific names.",
+    "language": "HTML",
+    "html_url": "https://github.com/vicholz/livestream_tools",
+    "homepage": "https://vicholz.github.io/livestream_tools/",
+    "fork": false
+  },
+  {
+    "name": "math-sheet-generator",
+    "description": "Math worksheet generator with grade levels, interactive grading, and shareable links",
+    "language": "JavaScript",
+    "html_url": "https://github.com/vicholz/math-sheet-generator",
+    "homepage": "https://vicholz.github.io/math-sheet-generator/",
+    "fork": false
+  },
+  {
+    "name": "qr_maker",
+    "description": "Browser QR code creator and scanner for text, Wi-Fi, contacts, and more.",
+    "language": "JavaScript",
+    "html_url": "https://github.com/vicholz/qr_maker",
+    "homepage": "https://vicholz.github.io/qr_maker/",
+    "fork": false
+  },
+  {
+    "name": "simple_autounattend",
+    "description": "Windows unattended answer-file generator",
+    "language": "HTML",
+    "html_url": "https://github.com/vicholz/vicholz.github.io/blob/main/simple_autounattend.html",
+    "homepage": "simple_autounattend.html",
+    "fork": false
+  },
+  {
+    "name": "tuxmate",
+    "description": "Simplified vanilla JS remake of Tuxmate.",
+    "language": "TypeScript",
+    "html_url": "https://github.com/vicholz/tuxmate",
+    "homepage": "https://vicholz.github.io/tuxmate/",
+    "fork": true
+  },
+  {
+    "name": "UnattendedWinstall",
+    "description": "Browser customizer for the UnattendedWinstall autounattend.xml answer file.",
+    "language": "JavaScript",
+    "html_url": "https://github.com/vicholz/UnattendedWinstall",
+    "homepage": "https://vicholz.github.io/UnattendedWinstall/",
+    "fork": false
+  },
+  {
+    "name": "viewhtml",
+    "description": "Fetch and render a remote HTML document",
+    "language": "HTML",
+    "html_url": "https://github.com/vicholz/vicholz.github.io/blob/main/viewhtml.html",
+    "homepage": "viewhtml.html",
+    "fork": false
+  },
+  {
+    "name": "web-reader",
+    "description": "Read EPUB, MOBI, PRC, AZW, AZW3, CBZ, and CBR in the browser",
+    "language": "JavaScript",
+    "html_url": "https://github.com/vicholz/web-reader",
+    "homepage": "https://vicholz.github.io/web-reader/",
+    "fork": false
+  },
+  {
+    "name": "webcam",
+    "description": "Local camera and microphone preview",
+    "language": "HTML",
+    "html_url": "https://github.com/vicholz/vicholz.github.io/blob/main/webcam.html",
+    "homepage": "webcam.html",
+    "fork": false
+  }
+]
