@@ -417,56 +417,6 @@
       <div class="status">Loading GitHub Pages repos…</div>
     </div>
 
-    <section class="site-tools">
-      <h3>Also on this site</h3>
-      <ul>
-        <li>
-          <div class="site-tool">
-            <a href="simple_autounattend.html">
-              <strong>simple_autounattend</strong>
-              <span class="tool-desc">Windows unattended answer-file generator</span>
-            </a>
-            <span class="tool-version" data-site-version hidden></span>
-          </div>
-        </li>
-        <li>
-          <div class="site-tool">
-            <a href="viewhtml.html">
-              <strong>viewhtml</strong>
-              <span class="tool-desc">Fetch and render a remote HTML document</span>
-            </a>
-            <span class="tool-version" data-site-version hidden></span>
-          </div>
-        </li>
-        <li>
-          <div class="site-tool">
-            <a href="webcam.html">
-              <strong>webcam</strong>
-              <span class="tool-desc">Local camera and microphone preview</span>
-            </a>
-            <span class="tool-version" data-site-version hidden></span>
-          </div>
-        </li>
-        <li>
-          <div class="site-tool">
-            <a href="https://vicholz.github.io/math-sheet-generator/">
-              <strong>math-sheet-generator</strong>
-              <span class="tool-desc">Math worksheet generator with grade levels, interactive grading, and shareable links</span>
-            </a>
-            <span class="tool-version" data-site-version hidden></span>
-          </div>
-        </li>
-        <li>
-          <div class="site-tool">
-            <a href="https://github.com/vicholz/github-pages-app-template">
-              <strong>github-pages-app-template</strong>
-              <span class="tool-desc">Template and skill for modern vanilla GitHub Pages apps</span>
-            </a>
-            <span class="tool-version" data-site-version hidden></span>
-          </div>
-        </li>
-      </ul>
-    </section>
 
     <footer>
       Built from the public GitHub API for <a href="https://github.com/vicholz">github.com/vicholz</a>.
@@ -506,13 +456,28 @@
       { name: "web-reader", description: "Read EPUB, MOBI, PRC, AZW, AZW3, CBZ, and CBR in the browser", language: "JavaScript", html_url: "https://github.com/vicholz/web-reader", homepage: "https://vicholz.github.io/web-reader/", pushed_at: "2026-10-29T03:45:00Z", fork: false, default_branch: "main" }
     ];
 
+    // Local pages and repos that should always appear in the main grid
+    const EXTRA = [
+      { name: "simple_autounattend", description: "Windows unattended answer-file generator", language: "HTML", html_url: "https://github.com/vicholz/vicholz.github.io/blob/main/simple_autounattend.html", homepage: "simple_autounattend.html", pushed_at: null, fork: false, default_branch: "main" },
+      { name: "viewhtml", description: "Fetch and render a remote HTML document", language: "HTML", html_url: "https://github.com/vicholz/vicholz.github.io/blob/main/viewhtml.html", homepage: "viewhtml.html", pushed_at: null, fork: false, default_branch: "main" },
+      { name: "webcam", description: "Local camera and microphone preview", language: "HTML", html_url: "https://github.com/vicholz/vicholz.github.io/blob/main/webcam.html", homepage: "webcam.html", pushed_at: null, fork: false, default_branch: "main" },
+      { name: "math-sheet-generator", description: "Math worksheet generator with grade levels, interactive grading, and shareable links", language: "JavaScript", html_url: "https://github.com/vicholz/math-sheet-generator", homepage: "https://vicholz.github.io/math-sheet-generator/", pushed_at: null, fork: false, default_branch: "main" },
+      { name: "github-pages-app-template", description: "Template and skill for modern vanilla GitHub Pages apps", language: "JavaScript", html_url: "https://github.com/vicholz/github-pages-app-template", homepage: "https://vicholz.github.io/github-pages-app-template/", pushed_at: null, fork: false, default_branch: "main" }
+    ];
+
     const grid = document.getElementById("grid");
     const search = document.getElementById("q");
     let repos = [];
 
     function pagesUrl(repo) {
-      if (repo.homepage && /vicholz\.github\.io/.test(repo.homepage)) {
-        return repo.homepage.endsWith("/") ? repo.homepage : repo.homepage + "/";
+      if (repo.homepage) {
+        if (/^https?:\/\//.test(repo.homepage)) {
+          if (/vicholz\.github\.io/.test(repo.homepage)) {
+            return repo.homepage.endsWith("/") ? repo.homepage : repo.homepage + "/";
+          }
+          return repo.homepage;
+        }
+        return repo.homepage;
       }
       return "https://" + USER + ".github.io/" + repo.name + "/";
     }
@@ -584,10 +549,18 @@
         repos = all.filter(function (repo) {
           return !repo.private && (repo.has_pages || repo.homepage);
         });
-        if (!repos.length) repos = FALLBACK;
+        if (!repos.length) repos = FALLBACK.slice();
+        const names = new Set(repos.map(function (r) { return r.name; }));
+        EXTRA.forEach(function (extra) {
+          if (!names.has(extra.name)) repos.push(extra);
+        });
       } catch (err) {
         console.warn(err);
-        repos = FALLBACK;
+        repos = FALLBACK.slice();
+        const names = new Set(repos.map(function (r) { return r.name; }));
+        EXTRA.forEach(function (extra) {
+          if (!names.has(extra.name)) repos.push(extra);
+        });
       }
       render(search.value);
       try {
