@@ -88,6 +88,14 @@
     "fork": false
   },
   {
+    "name": "simple_scheduler",
+    "description": "Browser-only people scheduler with pools, recurring schedules, and JSON/ICS import-export",
+    "language": "JavaScript",
+    "html_url": "https://github.com/vicholz/simple_scheduler",
+    "homepage": "https://vicholz.github.io/simple_scheduler/",
+    "fork": false
+  },
+  {
     "name": "tuxmate",
     "description": "Simplified vanilla JS remake of Tuxmate.",
     "language": "TypeScript",
